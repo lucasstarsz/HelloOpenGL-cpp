@@ -1,10 +1,10 @@
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
 #include <fstream>
+#include <functional>
 #include <iostream>
 #include <sstream>
 #include <unordered_map>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 namespace LearnOpenGL
 {
@@ -162,12 +162,12 @@ int main()
     const unsigned int shaderProgram = LearnOpenGL::setupShaders(vertexShaderSource, fragmentShaderSource);
 
     constexpr float vertices[] = {
-        -0.5f, 0.25f, 0.0f, // 0
-        0.0f, 0.25f, 0.0f, // 1
-        0.5f, 0.25f, 0.0f, // 2
-        -0.5f, -0.25f, 0.0f, // 3
-        0.0f, -0.25f, 0.0f, // 4
-        0.5f, -0.25f, 0.0f, // 5
+        -0.5f, 0.25f, 0.0f, 0.5f, 0.0f, 0.0f, // 0
+        0.0f, 0.25f, 0.0f, 0.25f, 0.25f, 0.0f, // 1
+        0.5f, 0.25f, 0.0f, 0.0f, 0.5f, 0.0f, // 2
+        -0.5f, -0.25f, 0.0f, 0.0f, 0.25f, 0.25f, // 3
+        0.0f, -0.25f, 0.0f, 0.0f, 0.0f, 0.5f, // 4
+        0.5f, -0.25f, 0.0f, 0.25f, 0.0f, 0.25f, // 5
     };
 
     constexpr unsigned int indices[] = {
@@ -194,8 +194,14 @@ int main()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+    // position
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), nullptr);
     glEnableVertexAttribArray(0);
+
+    // color
+    constexpr int colorSize = 3 * sizeof(float);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<const void*>(colorSize));
+    glEnableVertexAttribArray(1);
 
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -204,23 +210,26 @@ int main()
     // game loop except not in the slightest
     glViewport(0, 0, 800, 600);
 
+    auto previousTime = static_cast<float>(glfwGetTime());
+    float accumulatedTime{};
+
     while (!glfwWindowShouldClose(window))
     {
-        constexpr float pi = 3.141592653589793238464643383f;
         processInput(window);
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        const auto time = static_cast<float>(glfwGetTime());
-        const float redValue = sin(2 * time) / 2.0f + 0.5f;
-        const float greenValue = sin(2 * time - (pi / 2.25f)) / 2.0f + 0.5f;
-        const float blueValue = sin(2 * time - (2 * pi / 2.25f)) / 2.0f + 0.5f;
+        const auto currentTime = static_cast<float>(glfwGetTime());
+        const int uniformAccumulatedTime = glGetUniformLocation(shaderProgram, "accumulatedTime");
 
-        const int uniformColorLocation = glGetUniformLocation(shaderProgram, "uniformColor");
+        // fragment shader cycles all the way through colors every 9
+        // 1 per shift (red -> green, green -> blue, blue -> red) makes 3
+        // 3 shifts => colors back to original state
+        accumulatedTime = fmodf(accumulatedTime + currentTime - previousTime, 9.0f);
 
         glUseProgram(shaderProgram);
-        glUniform4f(uniformColorLocation, redValue, greenValue, blueValue, 1.0f);
+        glUniform1f(uniformAccumulatedTime, accumulatedTime);
 
         glBindVertexArray(vao);
         glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, nullptr);
@@ -229,6 +238,8 @@ int main()
 
         glfwSwapBuffers(window);
         glfwPollEvents();
+
+        previousTime = currentTime;
     }
 
     glDeleteVertexArrays(1, &vao);
