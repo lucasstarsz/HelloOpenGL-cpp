@@ -5,6 +5,8 @@
 #include "LearnOpenGL/Shader.h"
 #include <stb/stb_image.h>
 
+#include "LearnOpenGL/Texture2D.h"
+
 void frameBufferSizeCallback(GLFWwindow*, const int width, const int height)
 {
     glViewport(0, 0, width, height);
@@ -19,6 +21,7 @@ void processInput(GLFWwindow* window)
 }
 
 typedef LearnOpenGL::Shader::Shader Shader;
+typedef LearnOpenGL::Texture2D Texture2D;
 
 int main()
 {
@@ -104,34 +107,11 @@ int main()
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<const void*>(textureCoordsSize));
     glEnableVertexAttribArray(2);
 
-    unsigned int texture;
-
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
     stbi_set_flip_vertically_on_load(true);
+    const LearnOpenGL::Texture2D texture("Res/container.jpg");
 
-    int imageWidth;
-    int imageHeight;
-    int numberChannels;
-    unsigned char* imageData = stbi_load("Res/container.jpg", &imageWidth, &imageHeight, &numberChannels, 0);
-
-    if (imageData)
-    {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageWidth, imageHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
-    else
-    {
-        std::cout << "Failed to load texture" << std::endl;
-    }
-
-    stbi_image_free(imageData);
+    texture.setTextureWrap(GL_REPEAT, GL_REPEAT);
+    texture.setTextureFilters(GL_LINEAR, GL_LINEAR);
 
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -160,9 +140,7 @@ int main()
         // 3 full shifts => colors back to original state
         accumulatedTime = fmodf(accumulatedTime + currentTime - previousTime, 9.0f);
 
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture);
-
+        texture.use();
         shader.use();
         shader.setFloat("accumulatedTime", accumulatedTime);
 
@@ -180,6 +158,10 @@ int main()
     glDeleteVertexArrays(1, &vao);
     glDeleteBuffers(1, &vbo);
     glDeleteBuffers(1, &ebo);
+
+    // TODO determine better approach to deleting class-based content
+    const GLuint textureToDelete = texture.getId();
+    glDeleteTextures(1, &textureToDelete);
     glDeleteProgram(shader.getId());
 
     glfwTerminate();
