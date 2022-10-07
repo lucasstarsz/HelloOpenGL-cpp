@@ -171,11 +171,19 @@
   <ItemGroup>
     <ClCompile Include="glad.c" />
     <ClCompile Include="HelloOpenGL.cpp" />
+    <ClCompile Include="LearnOpenGL\FileUtils.cpp" />
+    <ClCompile Include="LearnOpenGL\Shader.cpp" />
+    <ClCompile Include="LearnOpenGL\ShaderUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fragment.glsl" />
     <Content Include="vertex.glsl" />
     <Content Include="yellowfrag.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="LearnOpenGL\FileUtils.h" />
+    <ClInclude Include="LearnOpenGL\Shader.h" />
+    <ClInclude Include="LearnOpenGL\ShaderUtils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

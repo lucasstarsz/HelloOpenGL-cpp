@@ -1,110 +1,8 @@
-#include <fstream>
-#include <functional>
 #include <iostream>
-#include <sstream>
-#include <unordered_map>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-namespace LearnOpenGL
-{
-    static const std::unordered_map<GLuint, std::string> ShaderNames = {
-        { GL_VERTEX_SHADER, "Vertex" },
-        { GL_FRAGMENT_SHADER, "Fragment" },
-        { GL_GEOMETRY_SHADER, "Geometry" },
-    };
-
-    unsigned int compileShader(const std::string& shaderSource, const GLuint shaderType)
-    {
-        const unsigned int shader = glCreateShader(shaderType);
-
-        const char* shaderCString = shaderSource.c_str();
-        glShaderSource(shader, 1, &shaderCString, nullptr);
-
-        glCompileShader(shader);
-
-        int shaderCompileSuccess;
-        glGetShaderiv(shader, GL_COMPILE_STATUS, &shaderCompileSuccess);
-
-        if (!shaderCompileSuccess)
-        {
-            char infoLog[512];
-            glGetShaderInfoLog(shader, sizeof(infoLog), nullptr, infoLog);
-            std::cerr << "ERROR: " << ShaderNames.at(shaderType) << " Shader Compilation Failed\n" << infoLog << '\n';
-
-            return 0;
-        }
-
-        std::cerr << "Successfully compiled " << ShaderNames.at(shaderType) << " shader.\n";
-
-        return shader;
-    }
-
-    unsigned int attachShaders(const std::initializer_list<unsigned int> shaders)
-    {
-        const unsigned int shaderProgram = glCreateProgram();
-
-        for (const unsigned int shader : shaders)
-        {
-            glAttachShader(shaderProgram, shader);
-        }
-
-        glLinkProgram(shaderProgram);
-
-        int shaderLinkSuccess;
-        glGetProgramiv(shaderProgram, GL_LINK_STATUS, &shaderLinkSuccess);
-
-        if (!shaderLinkSuccess)
-        {
-            char infoLog[512];
-            glGetProgramInfoLog(shaderProgram, 512, nullptr, infoLog);
-            std::cerr << "ERROR: Shader Program Linking Failed\n" << infoLog << '\n';
-
-            return 0;
-        }
-
-        std::cerr << "Successfully attached all shaders.\n";
-
-        return shaderProgram;
-    }
-
-    unsigned int setupShaders(const std::string& vertex, const std::string& fragment)
-    {
-        const unsigned int vertexShader = compileShader(vertex, GL_VERTEX_SHADER);
-        const unsigned int fragmentShader = compileShader(fragment, GL_FRAGMENT_SHADER);
-
-        // can't link shaders to program if they didn't all compile
-        if (vertexShader == 0 || fragmentShader == 0)
-        {
-            return 0;
-        }
-
-        const unsigned int shaderProgram = attachShaders({ vertexShader, fragmentShader });
-
-        glDeleteShader(vertexShader);
-        glDeleteShader(fragmentShader);
-
-        return shaderProgram;
-    }
-
-    std::string loadFile(const std::string& fileLocation)
-    {
-        const std::ifstream file(fileLocation);
-
-        if (!file.is_open())
-        {
-            std::cerr << "Unable to find file at " << fileLocation << " to open.\n";
-            return "";
-        }
-
-        std::cerr << "Found file at " << fileLocation << " to open.\n";
-
-        std::stringstream fileContents;
-        fileContents << file.rdbuf();
-
-        return fileContents.str();
-    }
-}
+#include "LearnOpenGL/Shader.h"
 
 void frameBufferSizeCallback(GLFWwindow*, const int width, const int height)
 {
@@ -118,6 +16,8 @@ void processInput(GLFWwindow* window)
         glfwSetWindowShouldClose(window, true);
     }
 }
+
+typedef LearnOpenGL::Shader::Shader Shader;
 
 int main()
 {
@@ -152,14 +52,7 @@ int main()
 
     // rendering setup
 
-    int attributeCount;
-    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &attributeCount);
-
-    std::cerr << attributeCount << " possible attributes.\n";
-
-    const std::string vertexShaderSource = LearnOpenGL::loadFile("vertex.glsl");
-    const std::string fragmentShaderSource = LearnOpenGL::loadFile("fragment.glsl");
-    const unsigned int shaderProgram = LearnOpenGL::setupShaders(vertexShaderSource, fragmentShaderSource);
+    const Shader shader("vertex.glsl", "fragment.glsl");
 
     constexpr float vertices[] = {
         -0.5f, 0.25f, 0.0f, 0.5f, 0.0f, 0.0f, // 0
@@ -221,15 +114,14 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         const auto currentTime = static_cast<float>(glfwGetTime());
-        const int uniformAccumulatedTime = glGetUniformLocation(shaderProgram, "accumulatedTime");
 
-        // fragment shader cycles all the way through colors every 9
-        // 1 per shift (red -> green, green -> blue, blue -> red) makes 3
-        // 3 shifts => colors back to original state
+        // fragment shader cycles all the way through color shifts completely every 9
+        // one full shift (i.e. red -> green, green -> blue, blue -> red) takes 3
+        // 3 full shifts => colors back to original state
         accumulatedTime = fmodf(accumulatedTime + currentTime - previousTime, 9.0f);
 
-        glUseProgram(shaderProgram);
-        glUniform1f(uniformAccumulatedTime, accumulatedTime);
+        shader.use();
+        shader.setFloat("accumulatedTime", accumulatedTime);
 
         glBindVertexArray(vao);
         glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, nullptr);
@@ -244,7 +136,7 @@ int main()
 
     glDeleteVertexArrays(1, &vao);
     glDeleteBuffers(1, &vbo);
-    glDeleteProgram(shaderProgram);
+    glDeleteProgram(shader.getId());
 
     glfwTerminate();
 
