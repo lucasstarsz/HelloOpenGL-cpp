@@ -172,8 +172,10 @@
     <ClCompile Include="glad.c" />
     <ClCompile Include="HelloOpenGL.cpp" />
     <ClCompile Include="LearnOpenGL\FileUtils.cpp" />
+    <ClCompile Include="LearnOpenGL\Image.cpp" />
     <ClCompile Include="LearnOpenGL\Shader.cpp" />
     <ClCompile Include="LearnOpenGL\ShaderUtils.cpp" />
+    <ClCompile Include="LearnOpenGL\Texture2D.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fragment.glsl" />
@@ -182,8 +184,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LearnOpenGL\FileUtils.h" />
+    <ClInclude Include="LearnOpenGL\Image.h" />
     <ClInclude Include="LearnOpenGL\Shader.h" />
     <ClInclude Include="LearnOpenGL\ShaderUtils.h" />
+    <ClInclude Include="LearnOpenGL\Texture2D.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

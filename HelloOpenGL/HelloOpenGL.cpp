@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 
 #include "LearnOpenGL/Shader.h"
+#include <stb/stb_image.h>
 
 void frameBufferSizeCallback(GLFWwindow*, const int width, const int height)
 {
@@ -30,6 +31,10 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+#ifdef __APPLE__
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
+
     GLFWwindow* window = glfwCreateWindow(800, 600, "LearnOpenGL", nullptr, nullptr);
 
     if (!window)
@@ -54,30 +59,28 @@ int main()
 
     const Shader shader("vertex.glsl", "fragment.glsl");
 
-    constexpr float vertices[] = {
-        -0.5f, 0.25f, 0.0f, 0.5f, 0.0f, 0.0f, // 0
-        0.0f, 0.25f, 0.0f, 0.25f, 0.25f, 0.0f, // 1
-        0.5f, 0.25f, 0.0f, 0.0f, 0.5f, 0.0f, // 2
-        -0.5f, -0.25f, 0.0f, 0.0f, 0.25f, 0.25f, // 3
-        0.0f, -0.25f, 0.0f, 0.0f, 0.0f, 0.5f, // 4
-        0.5f, -0.25f, 0.0f, 0.25f, 0.0f, 0.25f, // 5
+    constexpr float vertices[] =
+    {
+        // positions         // colors           // texture coords
+        0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // top right
+        0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // bottom right
+        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom left
+        -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f // top left 
     };
 
-    constexpr unsigned int indices[] = {
+    constexpr unsigned int indices[] =
+    {
         0, 1, 3, // first triangle
-        1, 2, 4, // second triangle
-        4, 3, 1, // third triangle
-        5, 4, 2, // fourth triangle
+        1, 2, 3, // second triangle
     };
-
-    unsigned int ebo;
-    glGenBuffers(1, &ebo);
 
     unsigned int vao;
-    glGenVertexArrays(1, &vao);
-
     unsigned int vbo;
+    unsigned int ebo;
+
+    glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
+    glGenBuffers(1, &ebo);
 
     glBindVertexArray(vao);
 
@@ -88,13 +91,47 @@ int main()
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     // position
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), nullptr);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), nullptr);
     glEnableVertexAttribArray(0);
 
     // color
     constexpr int colorSize = 3 * sizeof(float);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<const void*>(colorSize));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<const void*>(colorSize));
     glEnableVertexAttribArray(1);
+
+    // texture
+    constexpr int textureCoordsSize = 6 * sizeof(float);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<const void*>(textureCoordsSize));
+    glEnableVertexAttribArray(2);
+
+    unsigned int texture;
+
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    stbi_set_flip_vertically_on_load(true);
+
+    int imageWidth;
+    int imageHeight;
+    int numberChannels;
+    unsigned char* imageData = stbi_load("Res/container.jpg", &imageWidth, &imageHeight, &numberChannels, 0);
+
+    if (imageData)
+    {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageWidth, imageHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else
+    {
+        std::cout << "Failed to load texture" << std::endl;
+    }
+
+    stbi_image_free(imageData);
 
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -105,6 +142,9 @@ int main()
 
     auto previousTime = static_cast<float>(glfwGetTime());
     float accumulatedTime{};
+
+    shader.use();
+    shader.setInt("tex", 0);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -120,11 +160,14 @@ int main()
         // 3 full shifts => colors back to original state
         accumulatedTime = fmodf(accumulatedTime + currentTime - previousTime, 9.0f);
 
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture);
+
         shader.use();
         shader.setFloat("accumulatedTime", accumulatedTime);
 
         glBindVertexArray(vao);
-        glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, nullptr);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
         glBindVertexArray(0);
 
@@ -136,6 +179,7 @@ int main()
 
     glDeleteVertexArrays(1, &vao);
     glDeleteBuffers(1, &vbo);
+    glDeleteBuffers(1, &ebo);
     glDeleteProgram(shader.getId());
 
     glfwTerminate();
