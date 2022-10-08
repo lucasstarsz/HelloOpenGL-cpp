@@ -13,7 +13,8 @@ namespace LearnOpenGL
     public:
         explicit Texture2D(const std::string& texturePath, bool useMipmaps = false);
 
-        unsigned int getId() const;
+        [[nodiscard]] unsigned int getId() const;
+        
         void use(GLenum activeTexture = 0) const;
 
         void setTextureWrap(GLint wrapX, GLint wrapY, GLenum activeTexture = DefaultTexture) const;
@@ -24,7 +25,7 @@ namespace LearnOpenGL
         static void unbind();
 
     private:
-        unsigned int textureId;
+        unsigned int _textureId;
     };
 }
 

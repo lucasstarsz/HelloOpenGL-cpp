@@ -9,11 +9,11 @@ namespace LearnOpenGL
 {
     Texture2D::Texture2D(const std::string& texturePath, const bool useMipmaps)
     {
-        glGenTextures(1, &textureId);
+        glGenTextures(1, &_textureId);
 
-        if (!textureId)
+        if (!_textureId)
         {
-            textureId = 0;
+            _textureId = 0;
             std::cerr << "Failed to generate texture id for texture at " << texturePath << "\n";
 
             return;
@@ -46,7 +46,7 @@ namespace LearnOpenGL
 
     unsigned int Texture2D::getId() const
     {
-        return textureId;
+        return _textureId;
     }
 
     void Texture2D::use(const GLenum activeTexture) const
@@ -86,7 +86,7 @@ namespace LearnOpenGL
 
     void Texture2D::bind() const
     {
-        glBindTexture(GL_TEXTURE_2D, textureId);
+        glBindTexture(GL_TEXTURE_2D, _textureId);
     }
 
     void Texture2D::unbind()

@@ -11,7 +11,7 @@ namespace LearnOpenGL::Shader
     public:
         Shader(const std::string& vertexPath, const std::string& fragmentPath);
 
-        unsigned int getId() const;
+        [[nodiscard]] unsigned int getId() const;
 
         void use() const;
 
@@ -20,7 +20,7 @@ namespace LearnOpenGL::Shader
         void setFloat(const std::string& name, float value) const;
 
     private:
-        unsigned int id;
+        unsigned int _id;
     };
 }
 

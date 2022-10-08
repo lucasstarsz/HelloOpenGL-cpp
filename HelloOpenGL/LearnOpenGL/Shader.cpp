@@ -17,11 +17,11 @@ namespace LearnOpenGL::Shader
         // can't link shaders to program if they didn't all compile
         if (vertexShader == 0 || fragmentShader == 0)
         {
-            id = 0;
+            _id = 0;
             return;
         }
 
-        id = Utilities::attachShaders({ vertexShader, fragmentShader });
+        _id = Utilities::attachShaders({ vertexShader, fragmentShader });
 
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);
@@ -29,26 +29,26 @@ namespace LearnOpenGL::Shader
 
     unsigned int Shader::getId() const
     {
-        return id;
+        return _id;
     }
 
     void Shader::use() const
     {
-        glUseProgram(id);
+        glUseProgram(_id);
     }
 
     void Shader::setBool(const std::string& name, const bool value) const
     {
-        glUniform1i(glGetUniformLocation(id, name.c_str()), static_cast<int>(value));
+        glUniform1i(glGetUniformLocation(_id, name.c_str()), static_cast<int>(value));
     }
 
     void Shader::setInt(const std::string& name, const int value) const
     {
-        glUniform1i(glGetUniformLocation(id, name.c_str()), value);
+        glUniform1i(glGetUniformLocation(_id, name.c_str()), value);
     }
 
     void Shader::setFloat(const std::string& name, const float value) const
     {
-        glUniform1f(glGetUniformLocation(id, name.c_str()), value);
+        glUniform1f(glGetUniformLocation(_id, name.c_str()), value);
     }
 }
