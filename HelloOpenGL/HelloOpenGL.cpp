@@ -6,21 +6,11 @@
 #include "LearnOpenGL/Graphics/Texture2D.h"
 #include "LearnOpenGL/Graphics/Shader.h"
 
-void frameBufferSizeCallback(GLFWwindow*, const int width, const int height)
-{
-    glViewport(0, 0, width, height);
-}
-
-void processInput(GLFWwindow* window)
-{
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-    {
-        glfwSetWindowShouldClose(window, true);
-    }
-}
-
 typedef LearnOpenGL::Graphics::Shader Shader;
 typedef LearnOpenGL::Graphics::Texture2D Texture2D;
+
+void frameBufferSizeCallback(GLFWwindow*, int width, int height);
+void processInput(GLFWwindow* window);
 
 int main()
 {
@@ -166,4 +156,17 @@ int main()
     glfwTerminate();
 
     return 0;
+}
+
+void frameBufferSizeCallback(GLFWwindow*, const int width, const int height)
+{
+    glViewport(0, 0, width, height);
+}
+
+void processInput(GLFWwindow* window)
+{
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    {
+        glfwSetWindowShouldClose(window, true);
+    }
 }
