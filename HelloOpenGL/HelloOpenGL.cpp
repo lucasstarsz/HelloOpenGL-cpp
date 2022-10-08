@@ -1,11 +1,10 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-
-#include "LearnOpenGL/Shader.h"
 #include <stb/stb_image.h>
 
-#include "LearnOpenGL/Texture2D.h"
+#include "LearnOpenGL/Graphics/Texture2D.h"
+#include "LearnOpenGL/Graphics/Shader.h"
 
 void frameBufferSizeCallback(GLFWwindow*, const int width, const int height)
 {
@@ -20,8 +19,8 @@ void processInput(GLFWwindow* window)
     }
 }
 
-typedef LearnOpenGL::Shader::Shader Shader;
-typedef LearnOpenGL::Texture2D Texture2D;
+typedef LearnOpenGL::Graphics::Shader Shader;
+typedef LearnOpenGL::Graphics::Texture2D Texture2D;
 
 int main()
 {
@@ -108,7 +107,7 @@ int main()
     glEnableVertexAttribArray(2);
 
     stbi_set_flip_vertically_on_load(true);
-    const LearnOpenGL::Texture2D texture("Res/container.jpg");
+    const Texture2D texture("Res/container.jpg");
 
     texture.setTextureWrap(GL_REPEAT, GL_REPEAT);
     texture.setTextureFilters(GL_LINEAR, GL_LINEAR);

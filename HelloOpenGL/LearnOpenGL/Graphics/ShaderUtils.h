@@ -6,7 +6,7 @@
 #include <string>
 #include <glad/glad.h>
 
-namespace LearnOpenGL::Shader::Utilities
+namespace LearnOpenGL::Graphics
 {
     unsigned int compileShader(const std::string& shaderSource, const GLuint& shaderType);
     unsigned int attachShaders(const std::initializer_list<unsigned int>& shaders);

@@ -1,18 +1,18 @@
 ﻿#include <glad/glad.h>
 #include "Shader.h"
 
-#include "FileUtils.h"
 #include "ShaderUtils.h"
+#include "../Utilities/FileUtils.h"
 
-namespace LearnOpenGL::Shader
+namespace LearnOpenGL::Graphics
 {
     Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath)
     {
-        const std::string vertexShaderSource = LearnOpenGL::Utilities::loadFile(vertexPath);
-        const std::string fragmentShaderSource = LearnOpenGL::Utilities::loadFile(fragmentPath);
+        const std::string vertexShaderSource = Utilities::loadFile(vertexPath);
+        const std::string fragmentShaderSource = Utilities::loadFile(fragmentPath);
 
-        const unsigned int vertexShader = Utilities::compileShader(vertexShaderSource, GL_VERTEX_SHADER);
-        const unsigned int fragmentShader = Utilities::compileShader(fragmentShaderSource, GL_FRAGMENT_SHADER);
+        const unsigned int vertexShader = compileShader(vertexShaderSource, GL_VERTEX_SHADER);
+        const unsigned int fragmentShader = compileShader(fragmentShaderSource, GL_FRAGMENT_SHADER);
 
         // can't link shaders to program if they didn't all compile
         if (vertexShader == 0 || fragmentShader == 0)
@@ -21,7 +21,7 @@ namespace LearnOpenGL::Shader
             return;
         }
 
-        _id = Utilities::attachShaders({ vertexShader, fragmentShader });
+        _id = attachShaders({ vertexShader, fragmentShader });
 
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);

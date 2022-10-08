@@ -4,7 +4,7 @@
 #include <string>
 #include <glad/glad.h>
 
-namespace LearnOpenGL
+namespace LearnOpenGL::Graphics
 {
     constexpr GLenum DefaultTexture = 0;
 

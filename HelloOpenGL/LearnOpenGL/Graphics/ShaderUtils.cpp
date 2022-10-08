@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include <glad/glad.h>
 
-namespace LearnOpenGL::Shader::Utilities
+namespace LearnOpenGL::Graphics
 {
     static const std::unordered_map<GLuint, std::string> ShaderNames = {
         { GL_VERTEX_SHADER, "Vertex" },
@@ -29,7 +29,7 @@ namespace LearnOpenGL::Shader::Utilities
         {
             char infoLog[512];
             glGetShaderInfoLog(shader, sizeof(infoLog), nullptr, infoLog);
-            std::cerr << "ERROR: " << ShaderNames.at(shaderType) << " Shader Compilation Failed\n" << infoLog << '\n';
+            std::cerr << "ERROR: " << ShaderNames.at(shaderType) << " Graphics Compilation Failed\n" << infoLog << '\n';
 
             return 0;
         }
@@ -56,7 +56,7 @@ namespace LearnOpenGL::Shader::Utilities
         {
             char infoLog[512];
             glGetProgramInfoLog(shaderProgram, 512, nullptr, infoLog);
-            std::cerr << "ERROR: Shader Program Linking Failed\n" << infoLog << '\n';
+            std::cerr << "ERROR: Graphics Program Linking Failed\n" << infoLog << '\n';
 
             return 0;
         }

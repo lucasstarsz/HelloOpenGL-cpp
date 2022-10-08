@@ -5,7 +5,7 @@
 #include <ostream>
 #include <stb/stb_image.h>
 
-namespace LearnOpenGL
+namespace LearnOpenGL::Graphics
 {
     Texture2D::Texture2D(const std::string& texturePath, const bool useMipmaps)
     {

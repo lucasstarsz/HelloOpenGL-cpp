@@ -4,7 +4,7 @@
 
 #include <string>
 
-namespace LearnOpenGL::Shader
+namespace LearnOpenGL::Graphics
 {
     class Shader
     {
