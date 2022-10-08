@@ -3,6 +3,7 @@
 #define SHADER_H
 
 #include <string>
+#include <unordered_map>
 
 namespace LearnOpenGL::Graphics
 {
@@ -10,6 +11,13 @@ namespace LearnOpenGL::Graphics
     {
     public:
         Shader(const std::string& vertexPath, const std::string& fragmentPath);
+        Shader(const Shader& other);
+        Shader(Shader&&) noexcept = default;
+
+        Shader& operator=(const Shader& other);
+        Shader& operator=(Shader&&) = default;
+
+        ~Shader();
 
         [[nodiscard]] unsigned int getId() const;
 
@@ -20,7 +28,12 @@ namespace LearnOpenGL::Graphics
         void setFloat(const std::string& name, float value) const;
 
     private:
-        unsigned int _id;
+        inline static std::pmr::unordered_map<unsigned int, unsigned int> _shaderReferences{ {} };
+
+        unsigned int _shaderId;
+
+        static void addReference(unsigned int shaderId);
+        static void removeReference(unsigned int shaderId);
     };
 }
 

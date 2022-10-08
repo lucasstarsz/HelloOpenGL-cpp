@@ -1,5 +1,5 @@
-﻿#include <glad/glad.h>
-#include "Shader.h"
+﻿#include "Shader.h"
+#include <glad/glad.h>
 
 #include "ShaderUtils.h"
 #include "../Utilities/FileUtils.h"
@@ -17,38 +17,92 @@ namespace LearnOpenGL::Graphics
         // can't link shaders to program if they didn't all compile
         if (vertexShader == 0 || fragmentShader == 0)
         {
-            _id = 0;
+            _shaderId = 0;
             return;
         }
 
-        _id = attachShaders({ vertexShader, fragmentShader });
+        _shaderId = attachShaders({ vertexShader, fragmentShader });
 
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);
+
+        addReference(_shaderId);
+    }
+
+    Shader::Shader(const Shader& other)
+        : _shaderId(other._shaderId)
+    {
+        addReference(_shaderId);
+    }
+
+    Shader::~Shader()
+    {
+        removeReference(_shaderId);
     }
 
     unsigned int Shader::getId() const
     {
-        return _id;
+        return _shaderId;
     }
 
     void Shader::use() const
     {
-        glUseProgram(_id);
+        glUseProgram(_shaderId);
     }
 
     void Shader::setBool(const std::string& name, const bool value) const
     {
-        glUniform1i(glGetUniformLocation(_id, name.c_str()), static_cast<int>(value));
+        glUniform1i(glGetUniformLocation(_shaderId, name.c_str()), static_cast<int>(value));
     }
 
     void Shader::setInt(const std::string& name, const int value) const
     {
-        glUniform1i(glGetUniformLocation(_id, name.c_str()), value);
+        glUniform1i(glGetUniformLocation(_shaderId, name.c_str()), value);
     }
 
     void Shader::setFloat(const std::string& name, const float value) const
     {
-        glUniform1f(glGetUniformLocation(_id, name.c_str()), value);
+        glUniform1f(glGetUniformLocation(_shaderId, name.c_str()), value);
+    }
+
+    void Shader::addReference(const unsigned int shaderId)
+    {
+        if (!shaderId)
+        {
+            return;
+        }
+
+        if (!_shaderReferences.contains(shaderId))
+        {
+            _shaderReferences.insert({ shaderId, 1 });
+        }
+        else
+        {
+            _shaderReferences[shaderId]++;
+        }
+    }
+
+    void Shader::removeReference(const unsigned shaderId)
+    {
+        if (!_shaderReferences.contains(shaderId))
+        {
+            return;
+        }
+
+        _shaderReferences[shaderId]--;
+
+        if (_shaderReferences[shaderId] == 0)
+        {
+            glDeleteProgram(shaderId);
+            _shaderReferences.erase(shaderId);
+        }
+    }
+
+    Shader& Shader::operator=(const Shader& other)
+    {
+        _shaderId = other._shaderId;
+        addReference(_shaderId);
+
+        return *this;
     }
 }

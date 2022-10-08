@@ -44,6 +44,19 @@ namespace LearnOpenGL::Graphics
         unbind();
     }
 
+    Texture2D::Texture2D(const Texture2D& other)
+        : _textureId(other._textureId)
+    {
+        addReference(_textureId);
+    }
+
+    Texture2D& Texture2D::operator=(const Texture2D& other)
+    {
+        _textureId = other._textureId;
+        addReference(_textureId);
+        return *this;
+    }
+
     unsigned int Texture2D::getId() const
     {
         return _textureId;
@@ -89,8 +102,46 @@ namespace LearnOpenGL::Graphics
         glBindTexture(GL_TEXTURE_2D, _textureId);
     }
 
+    Texture2D::~Texture2D()
+    {
+        removeReference(_textureId);
+    }
+
     void Texture2D::unbind()
     {
         glBindTexture(GL_TEXTURE_2D, DefaultTexture);
+    }
+
+    void Texture2D::addReference(const unsigned int textureId)
+    {
+        if (!textureId)
+        {
+            return;
+        }
+
+        if (!_textureReferences.contains(textureId))
+        {
+            _textureReferences.insert({ textureId, 1 });
+        }
+        else
+        {
+            _textureReferences[textureId]++;
+        }
+    }
+
+    void Texture2D::removeReference(const unsigned textureId)
+    {
+        if (!_textureReferences.contains(textureId))
+        {
+            return;
+        }
+
+        _textureReferences[textureId]--;
+
+        if (_textureReferences[textureId] == 0)
+        {
+            glDeleteTextures(1, &textureId);
+            _textureReferences.erase(textureId);
+        }
     }
 }
