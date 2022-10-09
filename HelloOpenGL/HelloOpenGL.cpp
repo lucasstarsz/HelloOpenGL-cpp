@@ -6,11 +6,16 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "LearnOpenGL/Graphics/MeshUtils.h"
 #include "LearnOpenGL/Graphics/Texture2D.h"
 #include "LearnOpenGL/Graphics/Shader.h"
+#include "LearnOpenGL/Math/Transform.h"
+#include "LearnOpenGL/Math/Vector3.h"
 
 typedef LearnOpenGL::Graphics::Shader Shader;
 typedef LearnOpenGL::Graphics::Texture2D Texture2D;
+typedef LearnOpenGL::Math::Transform Transform;
+namespace Vector3 = LearnOpenGL::Math::Vector3;
 
 void frameBufferSizeCallback(GLFWwindow*, int width, int height);
 void processInput(GLFWwindow* window);
@@ -54,20 +59,7 @@ int main()
 
     const Shader shader("vertex.glsl", "fragment.glsl");
 
-    constexpr float vertices[] =
-    {
-        // positions         // colors           // texture coords
-        0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // top right
-        0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // bottom right
-        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom left
-        -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f // top left 
-    };
-
-    constexpr unsigned int indices[] =
-    {
-        0, 1, 3, // first triangle
-        1, 2, 3, // second triangle
-    };
+    const auto [vertices, indices] = LearnOpenGL::Graphics::generateCube(Vector3::Zero, 0.5f, true);
 
     unsigned int vao;
     unsigned int vbo;
@@ -80,24 +72,19 @@ int main()
     glBindVertexArray(vao);
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, static_cast<long long>(sizeof(float) * vertices.size()), vertices.data(), GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<long long>(sizeof(int) * indices.size()), indices.data(), GL_STATIC_DRAW);
 
     // position
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), nullptr);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), nullptr);
     glEnableVertexAttribArray(0);
 
-    // color
-    constexpr int colorSize = 3 * sizeof(float);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<const void*>(colorSize));
-    glEnableVertexAttribArray(1);
-
     // texture
-    constexpr int textureCoordsSize = 6 * sizeof(float);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<const void*>(textureCoordsSize));
-    glEnableVertexAttribArray(2);
+    constexpr int textureCoordsOffset = 3 * sizeof(float);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<const void*>(textureCoordsOffset));
+    glEnableVertexAttribArray(1);
 
     stbi_set_flip_vertically_on_load(true);
     const Texture2D texture("Res/container.jpg");
@@ -109,26 +96,36 @@ int main()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-    glm::mat4 transform(1.0f);
-    transform = rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    transform = scale(transform, glm::vec3(0.5f));
+    Transform transform{};
+
+    constexpr glm::mat4 identity(1.0f);
+    const glm::mat4 model(rotate(identity, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+    const glm::mat4 view(translate(identity, glm::vec3(0.0f, 0.0f, -3.0f)));
+    const glm::mat4 projection(glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f));
 
     // game loop except not in the slightest
     glViewport(0, 0, 800, 600);
+    glEnable(GL_DEPTH_TEST);
+    glfwSwapInterval(1);
 
     auto previousTime = static_cast<float>(glfwGetTime());
-    float accumulatedTime{};
+    float accumulatedTime = 0.0f;
+    float rotation = 0.0f;
 
     shader.use();
     shader.setInt("tex", 0);
-    shader.setMat4("transform", transform);
+    shader.setMat4("transform", transform.get());
+    shader.setMat4("model", model);
+    shader.setMat4("view", view);
+    shader.setMat4("projection", projection);
 
     while (!glfwWindowShouldClose(window))
     {
+        constexpr float scaleMod = -0.5f;
         processInput(window);
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         const auto currentTime = static_cast<float>(glfwGetTime());
 
@@ -137,29 +134,31 @@ int main()
         // 3 full shifts => colors back to original state
         accumulatedTime = fmodf(accumulatedTime + currentTime - previousTime, 9.0f);
 
-        transform = rotate(transform, glm::radians(static_cast<float>(glfwGetTime())), glm::vec3(0.0f, 0.0f, 1.0f));
+        transform.rotate(static_cast<float>(glfwGetTime()), Vector3::Forward);
 
         texture.use();
         shader.use();
         shader.setFloat("accumulatedTime", accumulatedTime);
-        shader.setMat4("transform", transform);
+        shader.setMat4("transform", transform.get());
 
         glBindVertexArray(vao);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        glDrawElements(GL_TRIANGLES, static_cast<int>(indices.size()), GL_UNSIGNED_INT, nullptr);
 
-        const float scale = sin(static_cast<float>(glfwGetTime()));
+        Transform t2{};
+        t2.translate(glm::vec3(-0.5f, 0.5f, 0.0f));
+        t2.scale(glm::vec3(scaleMod));
+        t2.rotate(rotation, Vector3::Right + Vector3::Up);
 
-        glm::mat4 t2(translate(glm::mat4(1.0f), glm::vec3(-0.5f, 0.5f, 0.0f)));
-        t2 = glm::scale(t2, glm::vec3(scale, scale, 0.0f));
+        shader.setMat4("transform", t2.get());
+        glDrawElements(GL_TRIANGLES, static_cast<int>(indices.size()), GL_UNSIGNED_INT, nullptr);
 
-        shader.setMat4("transform", t2);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        Transform t3{};
+        t3.translate(glm::vec3(0.5f, -0.5f, 0.0f));
+        t3.scale(glm::vec3(scaleMod));
+        t3.rotate(rotation, Vector3::Left + Vector3::Down);
 
-        glm::mat4 t3(translate(glm::mat4(1.0f), glm::vec3(0.5f, -0.5f, 0.0f)));
-        t3 = glm::scale(t3, glm::vec3(scale, scale, 0.0f));
-
-        shader.setMat4("transform", t3);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        shader.setMat4("transform", t3.get());
+        glDrawElements(GL_TRIANGLES, static_cast<int>(indices.size()), GL_UNSIGNED_INT, nullptr);
 
         glBindVertexArray(0);
 
@@ -167,6 +166,7 @@ int main()
         glfwPollEvents();
 
         previousTime = currentTime;
+        rotation = fmodf(rotation + 1, 360.0f);
     }
 
     glDeleteVertexArrays(1, &vao);

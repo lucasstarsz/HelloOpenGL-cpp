@@ -245,6 +245,7 @@
       <AdditionalOptions>/Zc:__cplusplus</AdditionalOptions>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
+    <ClCompile Include="LearnOpenGL\Graphics\MeshUtils.cpp" />
     <ClCompile Include="LearnOpenGL\Graphics\Shader.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -467,6 +468,7 @@
       <AdditionalOptions>/Zc:__cplusplus</AdditionalOptions>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
+    <ClCompile Include="LearnOpenGL\Math\Transform.cpp" />
     <ClCompile Include="LearnOpenGL\Utilities\FileUtils.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -549,9 +551,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LearnOpenGL\Graphics\Image.h" />
+    <ClInclude Include="LearnOpenGL\Graphics\MeshUtils.h" />
     <ClInclude Include="LearnOpenGL\Graphics\Shader.h" />
     <ClInclude Include="LearnOpenGL\Graphics\ShaderUtils.h" />
     <ClInclude Include="LearnOpenGL\Graphics\Texture2D.h" />
+    <ClInclude Include="LearnOpenGL\Math\Transform.h" />
+    <ClInclude Include="LearnOpenGL\Math\Vector3.h" />
     <ClInclude Include="LearnOpenGL\Utilities\FileUtils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

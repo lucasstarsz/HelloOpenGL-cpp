@@ -1,6 +1,5 @@
 #version 330 core
 
-in vec3 color;
 in vec2 texCoord;
 
 out vec4 fragmentColor;
@@ -45,5 +44,5 @@ vec3 shiftColor(vec3 color)
 
 void main()
 {
-    fragmentColor = mix(texture(tex, texCoord), vec4(shiftColor(color), 1.0f), 0.2f);
+    fragmentColor = mix(texture(tex, texCoord), vec4(shiftColor(vec3(1.0f, 0.0f, 0.0f)), 1.0f), 0.2f);
 }
