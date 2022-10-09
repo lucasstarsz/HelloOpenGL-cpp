@@ -2,6 +2,9 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <stb/stb_image.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "LearnOpenGL/Graphics/Texture2D.h"
 #include "LearnOpenGL/Graphics/Shader.h"
@@ -106,6 +109,10 @@ int main()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
+    glm::mat4 transform(1.0f);
+    transform = rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    transform = scale(transform, glm::vec3(0.5f));
+
     // game loop except not in the slightest
     glViewport(0, 0, 800, 600);
 
@@ -114,6 +121,7 @@ int main()
 
     shader.use();
     shader.setInt("tex", 0);
+    shader.setMat4("transform", transform);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -129,11 +137,28 @@ int main()
         // 3 full shifts => colors back to original state
         accumulatedTime = fmodf(accumulatedTime + currentTime - previousTime, 9.0f);
 
+        transform = rotate(transform, glm::radians(static_cast<float>(glfwGetTime())), glm::vec3(0.0f, 0.0f, 1.0f));
+
         texture.use();
         shader.use();
         shader.setFloat("accumulatedTime", accumulatedTime);
+        shader.setMat4("transform", transform);
 
         glBindVertexArray(vao);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+
+        const float scale = sin(static_cast<float>(glfwGetTime()));
+
+        glm::mat4 t2(translate(glm::mat4(1.0f), glm::vec3(-0.5f, 0.5f, 0.0f)));
+        t2 = glm::scale(t2, glm::vec3(scale, scale, 0.0f));
+
+        shader.setMat4("transform", t2);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+
+        glm::mat4 t3(translate(glm::mat4(1.0f), glm::vec3(0.5f, -0.5f, 0.0f)));
+        t3 = glm::scale(t3, glm::vec3(scale, scale, 0.0f));
+
+        shader.setMat4("transform", t3);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
         glBindVertexArray(0);

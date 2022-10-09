@@ -1,5 +1,7 @@
 ﻿#include "Shader.h"
 #include <glad/glad.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "ShaderUtils.h"
 #include "../Utilities/FileUtils.h"
@@ -63,6 +65,11 @@ namespace LearnOpenGL::Graphics
     void Shader::setFloat(const std::string& name, const float value) const
     {
         glUniform1f(glGetUniformLocation(_shaderId, name.c_str()), value);
+    }
+
+    void Shader::setMat4(const std::string& name, const glm::mat4& value, const GLboolean transposeMatrix) const
+    {
+        glUniformMatrix4fv(glGetUniformLocation(_shaderId, name.c_str()), 1, transposeMatrix, value_ptr(value));
     }
 
     void Shader::addReference(const unsigned int shaderId)

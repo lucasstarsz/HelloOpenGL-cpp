@@ -4,6 +4,8 @@
 
 #include <string>
 #include <unordered_map>
+#include <glad/glad.h>
+#include <glm/fwd.hpp>
 
 namespace LearnOpenGL::Graphics
 {
@@ -26,6 +28,7 @@ namespace LearnOpenGL::Graphics
         void setBool(const std::string& name, bool value) const;
         void setInt(const std::string& name, int value) const;
         void setFloat(const std::string& name, float value) const;
+        void setMat4(const std::string& name, const glm::mat4& value, GLboolean transposeMatrix = GL_FALSE) const;
 
     private:
         inline static std::pmr::unordered_map<unsigned int, unsigned int> _shaderReferences{ {} };
