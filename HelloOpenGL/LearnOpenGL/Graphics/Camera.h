@@ -13,12 +13,12 @@ namespace LearnOpenGL::Graphics
     {
     public:
         inline static constexpr glm::vec3 DefaultPosition{ Vector3::Zero };
-        inline static constexpr glm::vec3 DefaultFront{ Vector3::Back };
+        inline static constexpr glm::vec3 DefaultFront{ Vector3::Forward };
         inline static constexpr glm::vec3 DefaultUp{ Vector3::Up };
         inline static constexpr glm::vec3 DefaultRight{ Vector3::Right };
         inline static constexpr float DefaultPitch{ 0.0f };
         inline static constexpr float DefaultYaw{ -90.0f };
-        inline static constexpr float DefaultFov{ 30.0f };
+        inline static constexpr float DefaultFov{ 45.0f };
         inline static constexpr float DefaultNearClip{ 0.001f };
         inline static constexpr float DefaultFarClip{ 1000.0f };
         inline static constexpr float MinFov{ 1.0f };

@@ -72,6 +72,16 @@ namespace LearnOpenGL::Graphics
         glUniformMatrix4fv(glGetUniformLocation(_shaderId, name.c_str()), 1, transposeMatrix, value_ptr(value));
     }
 
+    void Shader::setVec3(const std::string& name, const glm::vec3& value) const
+    {
+        glUniform3fv(glGetUniformLocation(_shaderId, name.c_str()), 1, value_ptr(value));
+    }
+
+    void Shader::setMat3(const std::string& name, const glm::mat3& value, const GLboolean transposeMatrix) const
+    {
+        glUniformMatrix3fv(glGetUniformLocation(_shaderId, name.c_str()), 1, transposeMatrix, value_ptr(value));
+    }
+
     void Shader::addReference(const unsigned int shaderId)
     {
         if (!shaderId)

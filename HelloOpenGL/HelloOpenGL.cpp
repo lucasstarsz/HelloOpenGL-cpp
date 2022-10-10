@@ -38,6 +38,8 @@ float lastMouseY = 300.0f;
 
 bool firstMouse = true;
 
+glm::vec3 lightPosition(1.2f, 1.0f, 2.0f);
+
 int main()
 {
 #if __cplusplus >= 202002L
@@ -65,167 +67,115 @@ int main()
 
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, &frameBufferSizeCallback);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetCursorPosCallback(window, mouseCallback);
+    glfwSetScrollCallback(window, scrollCallback);
+    glfwSwapInterval(1);
 
     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
     {
         std::cerr << "Failed to initialize GLAD\n";
-
         return -1;
     }
 
+    glEnable(GL_DEPTH_TEST);
+
     // rendering setup
 
-    const Shader shader("vertex.glsl", "fragment.glsl");
+    const Shader lightShader("vertex.glsl", "lighting.frag");
+    const Shader lightCubeShader("vertex.glsl", "lightSource.frag");
 
-    const auto [vertices, indices] = LearnOpenGL::Graphics::generateCube(Vector3::Zero, 0.5f, true);
+    const auto [vertices, indices] = LearnOpenGL::Graphics::generateCubeWithNormals(Vector3::Zero, 0.5f);
 
-    unsigned int vao;
+    unsigned int lightVao;
     unsigned int vbo;
     unsigned int ebo;
 
-    glGenVertexArrays(1, &vao);
+    glGenVertexArrays(1, &lightVao);
     glGenBuffers(1, &vbo);
     glGenBuffers(1, &ebo);
 
-    glBindVertexArray(vao);
-
+    glBindVertexArray(lightVao);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, static_cast<long long>(sizeof(float) * vertices.size()), vertices.data(), GL_STATIC_DRAW);
-
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<long long>(sizeof(int) * indices.size()), indices.data(), GL_STATIC_DRAW);
 
-    // position
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), nullptr);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), nullptr);
     glEnableVertexAttribArray(0);
-
-    // texture
-    constexpr int textureCoordsOffset = 3 * sizeof(float);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<const void*>(textureCoordsOffset));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), nullptr);
     glEnableVertexAttribArray(1);
 
-    stbi_set_flip_vertically_on_load(true);
-    const Texture2D texture("Res/container.jpg");
+    // light cube vao
 
-    texture.setTextureWrap(GL_REPEAT, GL_REPEAT);
-    texture.setTextureFilters(GL_LINEAR, GL_LINEAR);
+    unsigned int lightCubeVao;
+    glGenVertexArrays(1, &lightCubeVao);
+    glBindVertexArray(lightCubeVao);
 
-    const auto [v2, i2] = LearnOpenGL::Graphics::generateFloor(Vector3::Down, 5.0f, true);
-
-    unsigned int vao2;
-    unsigned int vbo2;
-    unsigned int ebo2;
-
-    glGenVertexArrays(1, &vao2);
-    glGenBuffers(1, &vbo2);
-    glGenBuffers(1, &ebo2);
-
-    glBindVertexArray(vao2);
-
-    glBindBuffer(GL_ARRAY_BUFFER, vbo2);
-    glBufferData(GL_ARRAY_BUFFER, static_cast<long long>(sizeof(float) * v2.size()), v2.data(), GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo2);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<long long>(sizeof(int) * i2.size()), i2.data(), GL_STATIC_DRAW);
-
-    // position
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), nullptr);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), nullptr);
     glEnableVertexAttribArray(0);
-
-    // texture
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<const void*>(textureCoordsOffset));
-    glEnableVertexAttribArray(1);
 
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-    Transform transform{};
-
-    constexpr glm::mat4 identity(1.0f);
-    constexpr glm::mat4 model(identity);
-
     // game loop except not in the slightest
-    glViewport(0, 0, 800, 600);
-    glEnable(GL_DEPTH_TEST);
-    glfwSwapInterval(1);
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    glfwSetCursorPosCallback(window, mouseCallback);
-    glfwSetScrollCallback(window, scrollCallback);
-
-    float accumulatedTime = 0.0f;
-    float rotation = 0.01f;
-    constexpr float scaleMod = -0.5f;
-
-    shader.use();
-    shader.setInt("tex", 0);
-    shader.setMat4("transform", transform.get());
-    shader.setMat4("model", model);
 
     while (!glfwWindowShouldClose(window))
     {
-        const float deltaTime = timer.evaluateDeltaTime();
-
+        timer.evaluateDeltaTime();
         processInput(window);
 
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // fragment shader cycles all the way through color shifts completely every 9
-        // one full shift (i.e. red -> green, green -> blue, blue -> red) takes 3
-        // 3 full shifts => colors back to original state
-        accumulatedTime = fmodf(accumulatedTime + deltaTime, 9.0f);
-
-        transform.rotate(static_cast<float>(glfwGetTime()) * deltaTime, Vector3::Forward);
 
         const glm::mat4 view = camera.calculateView();
         const glm::mat4 projection = camera.calculateProjection();
+        glm::mat4 lightModel(1.0f);
 
-        glBindVertexArray(vao);
-        texture.use();
-        shader.use();
-        shader.setFloat("accumulatedTime", accumulatedTime);
-        shader.setMat4("transform", transform.get());
-        shader.setMat4("view", view);
-        shader.setMat4("projection", projection);
+        lightShader.use();
+        lightShader.setMat4("model", lightModel);
+        lightShader.setMat4("view", view);
+        lightShader.setMat4("projection", projection);
+        lightShader.setVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
+        lightShader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+        lightShader.setVec3("lightPosition", lightPosition);
+        lightShader.setVec3("viewPosition", camera.cameraPos);
+
+        glBindVertexArray(lightVao);
         glDrawElements(GL_TRIANGLES, static_cast<int>(indices.size()), GL_UNSIGNED_INT, nullptr);
 
-        Transform t2{};
-        t2.translate(glm::vec3(-1.0f, 0.5f, 0.0f));
-        t2.scale(glm::vec3(scaleMod));
-        t2.rotate(rotation, Vector3::Right + Vector3::Up);
+        // light source
 
-        shader.setMat4("transform", t2.get());
+        lightCubeShader.use();
+
+        lightModel = glm::mat4(1.0f);
+        lightModel = translate(lightModel, lightPosition);
+        lightModel = scale(lightModel, glm::vec3(0.5f));
+
+        lightCubeShader.setMat4("model", lightModel);
+        lightCubeShader.setMat4("view", view);
+        lightCubeShader.setMat4("projection", projection);
+
+        glBindVertexArray(lightCubeVao);
         glDrawElements(GL_TRIANGLES, static_cast<int>(indices.size()), GL_UNSIGNED_INT, nullptr);
-
-        Transform t3{};
-        t3.translate(glm::vec3(1.0f, -0.5f, 0.0f));
-        t3.scale(glm::vec3(scaleMod));
-        t3.rotate(rotation, Vector3::Left + Vector3::Down);
-
-        shader.setMat4("transform", t3.get());
-        glDrawElements(GL_TRIANGLES, static_cast<int>(indices.size()), GL_UNSIGNED_INT, nullptr);
-
-        glBindVertexArray(vao2);
-        shader.setMat4("transform", glm::mat4(1.0f));
-        glDrawElements(GL_TRIANGLES, static_cast<int>(i2.size()), GL_UNSIGNED_INT, nullptr);
 
         glBindVertexArray(0);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
-
-        rotation = fmodf(rotation + 1, 360.0f);
     }
 
-    glDeleteVertexArrays(1, &vao);
+    // glDeleteVertexArrays(1, &vao);
     glDeleteBuffers(1, &vbo);
     glDeleteBuffers(1, &ebo);
 
     // TODO determine better approach to deleting class-based content
-    const GLuint textureToDelete = texture.getId();
-    glDeleteTextures(1, &textureToDelete);
-    glDeleteProgram(shader.getId());
+    // const GLuint textureToDelete = texture.getId();
+    // glDeleteTextures(1, &textureToDelete);
+    // glDeleteProgram(shader.getId());
 
     glfwTerminate();
 

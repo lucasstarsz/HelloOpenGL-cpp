@@ -548,6 +548,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="fragment.glsl" />
+    <Content Include="lighting.frag" />
+    <Content Include="lightSource.frag" />
     <Content Include="vertex.glsl" />
     <Content Include="yellowfrag.glsl" />
   </ItemGroup>
