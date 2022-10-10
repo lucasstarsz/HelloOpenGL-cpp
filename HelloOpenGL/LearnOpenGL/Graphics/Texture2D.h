@@ -31,6 +31,7 @@ namespace LearnOpenGL::Graphics
 
         ~Texture2D();
 
+        static void stopUsing(GLenum activeTexture);
         static void unbind();
 
     private:

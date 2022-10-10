@@ -2,7 +2,9 @@
 
 out vec4 fragmentColor;
 
+uniform float brightness;
+
 void main()
 {
-    fragmentColor = vec4(1.0f);
+    fragmentColor = vec4(vec3(brightness), 1.0f);
 }

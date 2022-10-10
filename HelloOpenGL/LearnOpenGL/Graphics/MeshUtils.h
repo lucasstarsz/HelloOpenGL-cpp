@@ -3,7 +3,7 @@
 #define MESH_UTILS_H
 
 #include <vector>
-#include <glm/vec3.hpp>
+#include <glm/glm.hpp>
 
 namespace LearnOpenGL::Graphics
 {
@@ -13,7 +13,7 @@ namespace LearnOpenGL::Graphics
     std::pair<std::vector<float>, std::vector<unsigned int>> generateFloor(const glm::vec3& position = glm::vec3(), float scale = 1.0f,
                                                                            bool textureCoords = false);
 
-    std::pair<std::vector<float>, std::vector<unsigned int>> generateCubeWithNormals(const glm::vec3& position, float scale);
+    std::pair<std::vector<float>, std::vector<unsigned int>> generateTexturedNormalCube(float scale);
 }
 
 #endif

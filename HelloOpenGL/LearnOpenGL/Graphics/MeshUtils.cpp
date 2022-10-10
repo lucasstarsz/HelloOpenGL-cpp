@@ -1,7 +1,5 @@
 ﻿#include "MeshUtils.h"
 
-#include <glm/detail/func_geometric.inl>
-
 namespace LearnOpenGL::Graphics
 {
     std::pair<std::vector<float>, std::vector<unsigned int>> generateCube(const glm::vec3& position, const float scale,
@@ -157,39 +155,39 @@ namespace LearnOpenGL::Graphics
         };
     }
 
-    std::pair<std::vector<float>, std::vector<unsigned int>> generateCubeWithNormals(const glm::vec3& position, const float scale)
+    std::pair<std::vector<float>, std::vector<unsigned int>> generateTexturedNormalCube(const float scale)
     {
         return {
             {
-                position.x - scale, position.y - scale, position.z - scale, 0.0f, 0.0f, -1.0f,
-                position.x + scale, position.y - scale, position.z - scale, 0.0f, 0.0f, -1.0f,
-                position.x + scale, position.y + scale, position.z - scale, 0.0f, 0.0f, -1.0f,
-                position.x - scale, position.y + scale, position.z - scale, 0.0f, 0.0f, -1.0f,
+                -scale, -scale, -scale, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
+                scale, -scale, -scale, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f,
+                scale, scale, -scale, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f,
+                -scale, scale, -scale, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f,
 
-                position.x - scale, position.y - scale, position.z + scale, 0.0f, 0.0f, 1.0f,
-                position.x + scale, position.y - scale, position.z + scale, 0.0f, 0.0f, 1.0f,
-                position.x + scale, position.y + scale, position.z + scale, 0.0f, 0.0f, 1.0f,
-                position.x - scale, position.y + scale, position.z + scale, 0.0f, 0.0f, 1.0f,
+                -scale, -scale, scale, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+                scale, -scale, scale, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+                scale, scale, scale, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+                -scale, scale, scale, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
 
-                position.x - scale, position.y + scale, position.z + scale, -1.0f, 0.0f, 0.0f,
-                position.x - scale, position.y + scale, position.z - scale, -1.0f, 0.0f, 0.0f,
-                position.x - scale, position.y - scale, position.z - scale, -1.0f, 0.0f, 0.0f,
-                position.x - scale, position.y - scale, position.z + scale, -1.0f, 0.0f, 0.0f,
+                -scale, scale, scale, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+                -scale, scale, -scale, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+                -scale, -scale, -scale, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+                -scale, -scale, scale, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
 
-                position.x + scale, position.y + scale, position.z + scale, 1.0f, 0.0f, 0.0f,
-                position.x + scale, position.y + scale, position.z - scale, 1.0f, 0.0f, 0.0f,
-                position.x + scale, position.y - scale, position.z - scale, 1.0f, 0.0f, 0.0f,
-                position.x + scale, position.y - scale, position.z + scale, 1.0f, 0.0f, 0.0f,
+                scale, scale, scale, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+                scale, scale, -scale, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+                scale, -scale, -scale, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+                scale, -scale, scale, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
 
-                position.x - scale, position.y - scale, position.z - scale, 0.0f, -1.0f, 0.0f,
-                position.x + scale, position.y - scale, position.z - scale, 0.0f, -1.0f, 0.0f,
-                position.x + scale, position.y - scale, position.z + scale, 0.0f, -1.0f, 0.0f,
-                position.x - scale, position.y - scale, position.z + scale, 0.0f, -1.0f, 0.0f,
+                -scale, -scale, -scale, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f,
+                scale, -scale, -scale, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f,
+                scale, -scale, scale, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+                -scale, -scale, scale, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
 
-                position.x - scale, position.y + scale, position.z - scale, 0.0f, 1.0f, 0.0f,
-                position.x + scale, position.y + scale, position.z - scale, 0.0f, 1.0f, 0.0f,
-                position.x + scale, position.y + scale, position.z + scale, 0.0f, 1.0f, 0.0f,
-                position.x - scale, position.y + scale, position.z + scale, 0.0f, 1.0f, 0.0f,
+                -scale, scale, -scale, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+                scale, scale, -scale, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+                scale, scale, scale, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+                -scale, scale, scale, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
             },
             {
                 0, 1, 2,

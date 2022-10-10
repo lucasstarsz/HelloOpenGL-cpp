@@ -19,8 +19,6 @@ namespace LearnOpenGL::Graphics
             return;
         }
 
-        bind();
-
         int imageWidth;
         int imageHeight;
         int numberChannels;
@@ -28,7 +26,23 @@ namespace LearnOpenGL::Graphics
 
         if (imageData)
         {
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageWidth, imageHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
+            GLint format;
+            if (numberChannels == 3)
+            {
+                format = GL_RGB;
+            }
+            else if (numberChannels == 4)
+            {
+                format = GL_RGBA;
+            }
+            else
+            {
+                format = GL_RED;
+            }
+
+            bind();
+
+            glTexImage2D(GL_TEXTURE_2D, 0, format, imageWidth, imageHeight, 0, format, GL_UNSIGNED_BYTE, imageData);
 
             if (useMipmaps)
             {
@@ -105,6 +119,12 @@ namespace LearnOpenGL::Graphics
     Texture2D::~Texture2D()
     {
         removeReference(_textureId);
+    }
+
+    void Texture2D::stopUsing(const GLenum activeTexture)
+    {
+        glActiveTexture(activeTexture);
+        unbind();
     }
 
     void Texture2D::unbind()
