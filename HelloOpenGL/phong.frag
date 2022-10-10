@@ -44,7 +44,7 @@ struct PointLight
     float quadratic;
 };
 
-#define NR_POINT_LIGHTS 4
+#define NUMBER_POINT_LIGHTS 4
 
 in vec3 fragmentPosition;
 in vec3 normal;
@@ -55,7 +55,7 @@ out vec4 fragmentColor;
 uniform Material material;
 uniform DirectionalLight directionalLight;
 uniform SpotLight spotLight;
-uniform PointLight pointLights[NR_POINT_LIGHTS];
+uniform PointLight pointLights[NUMBER_POINT_LIGHTS];
 
 uniform vec3 viewPosition;
 uniform float time;
@@ -76,7 +76,7 @@ void main()
     colorOutput += calculateSpotLight(spotLight, normalizedNormal, fragmentPosition, viewDirection);
     colorOutput += calculateEmission();
 
-    for (int i = 0; i < NR_POINT_LIGHTS; i++)
+    for (int i = 0; i < NUMBER_POINT_LIGHTS; i++)
     {
         colorOutput += calculatePointLight(pointLights[i], normalizedNormal, fragmentPosition, viewDirection);
     }

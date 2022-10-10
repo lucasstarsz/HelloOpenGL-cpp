@@ -26,7 +26,7 @@ namespace LearnOpenGL::Graphics
 
         float pitch;
         float yaw;
-        
+
         glm::vec3 cameraPos;
         glm::vec3 cameraFront;
         glm::vec3 cameraRight;

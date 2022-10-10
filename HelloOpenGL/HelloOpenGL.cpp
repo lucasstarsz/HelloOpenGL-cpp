@@ -1,17 +1,18 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <stb/stb_image.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <stb/stb_image.h>
 
 #include "LearnOpenGL/Graphics/Camera.h"
 #include "LearnOpenGL/Graphics/MeshUtils.h"
-#include "LearnOpenGL/Graphics/Texture2D.h"
 #include "LearnOpenGL/Graphics/Shader.h"
+#include "LearnOpenGL/Graphics/Texture2D.h"
 #include "LearnOpenGL/Math/Transform.h"
 #include "LearnOpenGL/Math/Vector3.h"
+#include "LearnOpenGL/Model/Model.h"
 #include "LearnOpenGL/Utilities/Timer.h"
 
 typedef LearnOpenGL::Graphics::Shader Shader;
@@ -19,6 +20,7 @@ typedef LearnOpenGL::Graphics::Texture2D Texture2D;
 typedef LearnOpenGL::Math::Transform Transform;
 typedef LearnOpenGL::Graphics::Camera Camera;
 typedef LearnOpenGL::Utilities::Timer Timer;
+typedef LearnOpenGL::Model::Model Model;
 
 namespace Vector3 = LearnOpenGL::Math::Vector3;
 
@@ -49,7 +51,7 @@ bool fFirstPressed = false;
 int main()
 {
 #if __cplusplus >= 202002L
-    std::cout << "We meet again, Rider...\n";
+    std::cerr << "We meet again, Rider...\n";
 #endif
 
     glfwInit();
@@ -70,6 +72,7 @@ int main()
 
         return -1;
     }
+    std::cerr << "hi\n";
 
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, &frameBufferSizeCallback);
@@ -83,13 +86,16 @@ int main()
         std::cerr << "Failed to initialize GLAD\n";
         return -1;
     }
+    std::cerr << "glad to be here\n";
 
     glEnable(GL_DEPTH_TEST);
 
     // rendering setup
+    std::cerr << "shader\n";
 
-    const Shader lightShader("vertex.glsl", "phong.frag");
-    const Shader lightCubeShader("vertex.glsl", "lightSource.frag");
+    const Shader shader("vertex.glsl", "phong.frag");
+    const Shader lightSourceShader("vertex.glsl", "lightSource.frag");
+    std::cerr << "textures\n";
 
     const Texture2D diffuseMap("Res/container2.png", true);
     diffuseMap.setTextureWrap(GL_REPEAT, GL_REPEAT);
@@ -122,18 +128,21 @@ int main()
         glm::vec3(1.5f, 0.2f, -1.5f),
         glm::vec3(-1.3f, 1.0f, -1.5f)
     };
+    std::cerr << "model\n";
+    stbi_set_flip_vertically_on_load(true);
 
+    Model backpack{ "Res/backpack/backpack.obj" };
     const auto [vertices, indices] = LearnOpenGL::Graphics::generateTexturedNormalCube(0.5f);
 
-    unsigned int lightVao;
+    unsigned int vao;
     unsigned int vbo;
     unsigned int ebo;
 
-    glGenVertexArrays(1, &lightVao);
+    glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
     glGenBuffers(1, &ebo);
 
-    glBindVertexArray(lightVao);
+    glBindVertexArray(vao);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, static_cast<long long>(sizeof(float) * vertices.size()), vertices.data(), GL_STATIC_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
@@ -150,9 +159,9 @@ int main()
 
     // light cube vao
 
-    unsigned int lightCubeVao;
-    glGenVertexArrays(1, &lightCubeVao);
-    glBindVertexArray(lightCubeVao);
+    unsigned int lightSourceVao;
+    glGenVertexArrays(1, &lightSourceVao);
+    glBindVertexArray(lightSourceVao);
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
@@ -164,10 +173,10 @@ int main()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     // game loop except not in the slightest
-    lightShader.use();
-    lightShader.setInt("material.diffuse", 0);
-    lightShader.setInt("material.specular", 1);
-    lightShader.setInt("material.emission", 2);
+    shader.use();
+    shader.setInt("material.diffuse", 0);
+    shader.setInt("material.specular", 1);
+    shader.setInt("material.emission", 2);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -193,52 +202,52 @@ int main()
         const float cutoff = glm::cos(glm::radians(12.5f));
         const float outerCutoff = glm::cos(glm::radians(17.5f));
 
-        lightShader.use();
-        lightShader.setMat4("model", lightModel);
-        lightShader.setMat4("view", view);
-        lightShader.setMat4("projection", projection);
+        shader.use();
+        shader.setMat4("model", lightModel);
+        shader.setMat4("view", view);
+        shader.setMat4("projection", projection);
 
-        lightShader.setFloat("material.shininess", 64.0f);
-        lightShader.setVec3("viewPosition", camera.cameraPos);
+        shader.setFloat("material.shininess", 32.0f);
+        shader.setVec3("viewPosition", camera.cameraPos);
 
         for (int i = 0; i < 4; i++)
         {
-            lightShader.setVec3("pointLights[" + std::to_string(i) + "].position", pointLightPositions[i]);
-            lightShader.setVec3("pointLights[" + std::to_string(i) + "].ambient", ambientColor);
-            lightShader.setVec3("pointLights[" + std::to_string(i) + "].diffuse", diffuseColor);
-            lightShader.setVec3("pointLights[" + std::to_string(i) + "].specular", specularColor);
-            lightShader.setFloat("pointLights[" + std::to_string(i) + "].constant", lightConstant);
-            lightShader.setFloat("pointLights[" + std::to_string(i) + "].linear", lightLinear);
-            lightShader.setFloat("pointLights[" + std::to_string(i) + "].quadratic", lightQuadratic);
+            shader.setVec3("pointLights[" + std::to_string(i) + "].position", pointLightPositions[i]);
+            shader.setVec3("pointLights[" + std::to_string(i) + "].ambient", ambientColor);
+            shader.setVec3("pointLights[" + std::to_string(i) + "].diffuse", diffuseColor);
+            shader.setVec3("pointLights[" + std::to_string(i) + "].specular", specularColor);
+            shader.setFloat("pointLights[" + std::to_string(i) + "].constant", lightConstant);
+            shader.setFloat("pointLights[" + std::to_string(i) + "].linear", lightLinear);
+            shader.setFloat("pointLights[" + std::to_string(i) + "].quadratic", lightQuadratic);
         }
 
-        lightShader.setVec3("directionalLight.direction", camera.cameraFront);
-        lightShader.setVec3("directionalLight.ambient", ambientColor);
-        lightShader.setVec3("directionalLight.diffuse", diffuseColor);
-        lightShader.setVec3("directionalLight.specular", specularColor);
+        shader.setVec3("directionalLight.direction", camera.cameraFront);
+        shader.setVec3("directionalLight.ambient", ambientColor);
+        shader.setVec3("directionalLight.diffuse", diffuseColor);
+        shader.setVec3("directionalLight.specular", specularColor);
 
-        lightShader.setVec3("spotLight.position", camera.cameraPos);
-        lightShader.setVec3("spotLight.direction", camera.cameraFront);
-        lightShader.setFloat("spotLight.constant", lightConstant);
-        lightShader.setFloat("spotLight.linear", lightLinear);
-        lightShader.setFloat("spotLight.quadratic", lightQuadratic);
-        lightShader.setFloat("spotLight.cutoff", cutoff);
-        lightShader.setFloat("spotLight.outerCutoff", outerCutoff);
+        shader.setVec3("spotLight.position", camera.cameraPos);
+        shader.setVec3("spotLight.direction", camera.cameraFront);
+        shader.setFloat("spotLight.constant", lightConstant);
+        shader.setFloat("spotLight.linear", lightLinear);
+        shader.setFloat("spotLight.quadratic", lightQuadratic);
+        shader.setFloat("spotLight.cutoff", cutoff);
+        shader.setFloat("spotLight.outerCutoff", outerCutoff);
 
         if (enableFlashlight)
         {
-            lightShader.setVec3("spotLight.ambient", spotLightAmbientColor);
-            lightShader.setVec3("spotLight.diffuse", spotLightDiffuseColor);
-            lightShader.setVec3("spotLight.specular", spotLightSpecularColor);
+            shader.setVec3("spotLight.ambient", spotLightAmbientColor);
+            shader.setVec3("spotLight.diffuse", spotLightDiffuseColor);
+            shader.setVec3("spotLight.specular", spotLightSpecularColor);
         }
         else
         {
-            lightShader.setVec3("spotLight.ambient", Vector3::Zero);
-            lightShader.setVec3("spotLight.diffuse", Vector3::Zero);
-            lightShader.setVec3("spotLight.specular", Vector3::Zero);
+            shader.setVec3("spotLight.ambient", Vector3::Zero);
+            shader.setVec3("spotLight.diffuse", Vector3::Zero);
+            shader.setVec3("spotLight.specular", Vector3::Zero);
         }
 
-        lightShader.setFloat("time", static_cast<float>(timer.getCurrentTime()));
+        shader.setFloat("time", static_cast<float>(timer.getCurrentTime()));
 
         diffuseMap.use(GL_TEXTURE0);
         specularMap.use(GL_TEXTURE1);
@@ -251,7 +260,7 @@ int main()
             Texture2D::stopUsing(GL_TEXTURE2);
         }
 
-        glBindVertexArray(lightVao);
+        glBindVertexArray(vao);
         glDrawElements(GL_TRIANGLES, static_cast<int>(indices.size()), GL_UNSIGNED_INT, nullptr);
 
         for (unsigned int i = 0; i < 10; i++)
@@ -260,26 +269,28 @@ int main()
             model = translate(model, cubePositions[i]);
             const float angle = 20.0f * static_cast<float>(i);
             model = rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-            lightShader.setMat4("model", model);
+            shader.setMat4("model", model);
 
             glDrawElements(GL_TRIANGLES, static_cast<int>(indices.size()), GL_UNSIGNED_INT, nullptr);
         }
 
+        backpack.draw(shader);
+
         // light sources
 
-        lightCubeShader.use();
-        lightCubeShader.setMat4("view", view);
-        lightCubeShader.setMat4("projection", projection);
-        lightCubeShader.setFloat("brightness", brightness);
+        lightSourceShader.use();
+        lightSourceShader.setMat4("view", view);
+        lightSourceShader.setMat4("projection", projection);
+        lightSourceShader.setFloat("brightness", brightness);
 
         // we now draw as many light bulbs as we have point lights.
-        glBindVertexArray(lightCubeVao);
+        glBindVertexArray(lightSourceVao);
         for (auto pointLightPosition : pointLightPositions)
         {
             lightModel = glm::mat4(1.0f);
             lightModel = translate(lightModel, pointLightPosition);
             lightModel = scale(lightModel, glm::vec3(0.2f));
-            lightCubeShader.setMat4("model", lightModel);
+            lightSourceShader.setMat4("model", lightModel);
 
             glDrawElements(GL_TRIANGLES, static_cast<int>(indices.size()), GL_UNSIGNED_INT, nullptr);
         }
@@ -290,10 +301,6 @@ int main()
         glfwPollEvents();
     }
 
-    // glDeleteVertexArrays(1, &vao);
-    glDeleteBuffers(1, &vbo);
-    glDeleteBuffers(1, &ebo);
-
     // TODO determine better approach to deleting class-based content
     const GLuint diffuseMapId = diffuseMap.getId();
     glDeleteTextures(1, &diffuseMapId);
@@ -301,8 +308,13 @@ int main()
     glDeleteTextures(1, &specularMapId);
     const GLuint emissionMapId = emissionMap.getId();
     glDeleteTextures(1, &emissionMapId);
-    glDeleteProgram(lightShader.getId());
-    glDeleteProgram(lightCubeShader.getId());
+    glDeleteProgram(shader.getId());
+    glDeleteProgram(lightSourceShader.getId());
+
+    glDeleteVertexArrays(1, &vao);
+    glDeleteVertexArrays(1, &lightSourceVao);
+    glDeleteBuffers(1, &vbo);
+    glDeleteBuffers(1, &ebo);
 
     glfwTerminate();
 

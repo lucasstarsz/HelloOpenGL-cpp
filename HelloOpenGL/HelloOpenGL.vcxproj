@@ -1,577 +1,585 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|Win32">
-      <Configuration>Debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
-      <Configuration>Release</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|x64">
-      <Configuration>Debug</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|x64">
-      <Configuration>Release</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-  </ItemGroup>
-  <PropertyGroup Label="Globals">
-    <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{9F997322-0BC7-47CA-B771-715843AD6E1D}</ProjectGuid>
-    <Keyword>Win32Proj</Keyword>
-    <RootNamespace>HelloOpenGL</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-  </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup>
-    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <ImportGroup Label="ExtensionSettings">
-  </ImportGroup>
-  <ImportGroup Label="Shared">
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LinkIncremental>true</LinkIncremental>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);F:\github\lucasstarsz\HelloOpenGL\Include</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);F:\github\lucasstarsz\HelloOpenGL\Lib</LibraryPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LinkIncremental>false</LinkIncremental>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LinkIncremental>false</LinkIncremental>
-  </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalOptions>/Zc:__cplusplus</AdditionalOptions>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
-    </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalOptions>/Zc:__cplusplus</AdditionalOptions>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
-    </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);opengl32.lib;glfw3.lib</AdditionalDependencies>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalOptions>/Zc:__cplusplus</AdditionalOptions>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
-    </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalOptions>/Zc:__cplusplus</AdditionalOptions>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
-    </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="glad.c" />
-    <ClCompile Include="HelloOpenGL.cpp" />
-    <ClCompile Include="LearnOpenGL\Graphics\Camera.cpp" />
-    <ClCompile Include="LearnOpenGL\Graphics\Image.cpp">
-      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <Optimization>Disabled</Optimization>
-      <SupportJustMyCode>true</SupportJustMyCode>
-      <AssemblerOutput>NoListing</AssemblerOutput>
-      <AssemblerListingLocation>x64\Debug\</AssemblerListingLocation>
-      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
-      <BrowseInformation>false</BrowseInformation>
-      <BrowseInformationFile>x64\Debug\</BrowseInformationFile>
-      <CompileAs>Default</CompileAs>
-      <ConformanceMode>true</ConformanceMode>
-      <DiagnosticsFormat>Column</DiagnosticsFormat>
-      <DisableLanguageExtensions>false</DisableLanguageExtensions>
-      <ErrorReporting>Prompt</ErrorReporting>
-      <ExpandAttributedSource>false</ExpandAttributedSource>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <EnableASAN>false</EnableASAN>
-      <EnableFuzzer>false</EnableFuzzer>
-      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <FloatingPointModel>Precise</FloatingPointModel>
-      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-      <GenerateModuleDependencies>false</GenerateModuleDependencies>
-      <GenerateSourceDependencies>false</GenerateSourceDependencies>
-      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
-      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
-      <IntrinsicFunctions>false</IntrinsicFunctions>
-      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <MinimalRebuild>false</MinimalRebuild>
-      <ModuleDependenciesFile>x64\Debug\</ModuleDependenciesFile>
-      <ModuleOutputFile>x64\Debug\</ModuleOutputFile>
-      <OmitDefaultLibName>false</OmitDefaultLibName>
-      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
-      <ObjectFileName>x64\Debug\</ObjectFileName>
-      <CallingConvention>Cdecl</CallingConvention>
-      <ProgramDataBaseFileName>x64\Debug\vc143.pdb</ProgramDataBaseFileName>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>x64\Debug\HelloOpenGL.pch</PrecompiledHeaderOutputFile>
-      <PreprocessToFile>false</PreprocessToFile>
-      <PreprocessKeepComments>false</PreprocessKeepComments>
-      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
-      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
-      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
-      <ShowIncludes>false</ShowIncludes>
-      <SourceDependenciesFile>x64\Debug\</SourceDependenciesFile>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <BufferSecurityCheck>true</BufferSecurityCheck>
-      <SmallerTypeCheck>false</SmallerTypeCheck>
-      <SpectreMitigation>false</SpectreMitigation>
-      <StructMemberAlignment>Default</StructMemberAlignment>
-      <TrackerLogDirectory>x64\Debug\HelloOpenGL.tlog\</TrackerLogDirectory>
-      <TranslateIncludes>false</TranslateIncludes>
-      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
-      <TreatWarningAsError>false</TreatWarningAsError>
-      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
-      <UseFullPaths>true</UseFullPaths>
-      <WarningLevel>Level3</WarningLevel>
-      <XMLDocumentationFileName>x64\Debug\</XMLDocumentationFileName>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <IntelJCCErratum>false</IntelJCCErratum>
-      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
-      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
-      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
-      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_UNICODE;UNICODE;</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
-      <AdditionalOptions>/Zc:__cplusplus</AdditionalOptions>
-      <LinkCompiled>true</LinkCompiled>
-    </ClCompile>
-    <ClCompile Include="LearnOpenGL\Graphics\MeshUtils.cpp" />
-    <ClCompile Include="LearnOpenGL\Graphics\Shader.cpp">
-      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <Optimization>Disabled</Optimization>
-      <SupportJustMyCode>true</SupportJustMyCode>
-      <AssemblerOutput>NoListing</AssemblerOutput>
-      <AssemblerListingLocation>x64\Debug\</AssemblerListingLocation>
-      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
-      <BrowseInformation>false</BrowseInformation>
-      <BrowseInformationFile>x64\Debug\</BrowseInformationFile>
-      <CompileAs>Default</CompileAs>
-      <ConformanceMode>true</ConformanceMode>
-      <DiagnosticsFormat>Column</DiagnosticsFormat>
-      <DisableLanguageExtensions>false</DisableLanguageExtensions>
-      <ErrorReporting>Prompt</ErrorReporting>
-      <ExpandAttributedSource>false</ExpandAttributedSource>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <EnableASAN>false</EnableASAN>
-      <EnableFuzzer>false</EnableFuzzer>
-      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <FloatingPointModel>Precise</FloatingPointModel>
-      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-      <GenerateModuleDependencies>false</GenerateModuleDependencies>
-      <GenerateSourceDependencies>false</GenerateSourceDependencies>
-      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
-      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
-      <IntrinsicFunctions>false</IntrinsicFunctions>
-      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <MinimalRebuild>false</MinimalRebuild>
-      <ModuleDependenciesFile>x64\Debug\</ModuleDependenciesFile>
-      <ModuleOutputFile>x64\Debug\</ModuleOutputFile>
-      <OmitDefaultLibName>false</OmitDefaultLibName>
-      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
-      <ObjectFileName>x64\Debug\</ObjectFileName>
-      <CallingConvention>Cdecl</CallingConvention>
-      <ProgramDataBaseFileName>x64\Debug\vc143.pdb</ProgramDataBaseFileName>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>x64\Debug\HelloOpenGL.pch</PrecompiledHeaderOutputFile>
-      <PreprocessToFile>false</PreprocessToFile>
-      <PreprocessKeepComments>false</PreprocessKeepComments>
-      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
-      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
-      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
-      <ShowIncludes>false</ShowIncludes>
-      <SourceDependenciesFile>x64\Debug\</SourceDependenciesFile>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <BufferSecurityCheck>true</BufferSecurityCheck>
-      <SmallerTypeCheck>false</SmallerTypeCheck>
-      <SpectreMitigation>false</SpectreMitigation>
-      <StructMemberAlignment>Default</StructMemberAlignment>
-      <TrackerLogDirectory>x64\Debug\HelloOpenGL.tlog\</TrackerLogDirectory>
-      <TranslateIncludes>false</TranslateIncludes>
-      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
-      <TreatWarningAsError>false</TreatWarningAsError>
-      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
-      <UseFullPaths>true</UseFullPaths>
-      <WarningLevel>Level3</WarningLevel>
-      <XMLDocumentationFileName>x64\Debug\</XMLDocumentationFileName>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <IntelJCCErratum>false</IntelJCCErratum>
-      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
-      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
-      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
-      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_UNICODE;UNICODE;</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
-      <AdditionalOptions>/Zc:__cplusplus</AdditionalOptions>
-      <LinkCompiled>true</LinkCompiled>
-    </ClCompile>
-    <ClCompile Include="LearnOpenGL\Graphics\ShaderUtils.cpp">
-      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <Optimization>Disabled</Optimization>
-      <SupportJustMyCode>true</SupportJustMyCode>
-      <AssemblerOutput>NoListing</AssemblerOutput>
-      <AssemblerListingLocation>x64\Debug\</AssemblerListingLocation>
-      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
-      <BrowseInformation>false</BrowseInformation>
-      <BrowseInformationFile>x64\Debug\</BrowseInformationFile>
-      <CompileAs>Default</CompileAs>
-      <ConformanceMode>true</ConformanceMode>
-      <DiagnosticsFormat>Column</DiagnosticsFormat>
-      <DisableLanguageExtensions>false</DisableLanguageExtensions>
-      <ErrorReporting>Prompt</ErrorReporting>
-      <ExpandAttributedSource>false</ExpandAttributedSource>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <EnableASAN>false</EnableASAN>
-      <EnableFuzzer>false</EnableFuzzer>
-      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <FloatingPointModel>Precise</FloatingPointModel>
-      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-      <GenerateModuleDependencies>false</GenerateModuleDependencies>
-      <GenerateSourceDependencies>false</GenerateSourceDependencies>
-      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
-      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
-      <IntrinsicFunctions>false</IntrinsicFunctions>
-      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <MinimalRebuild>false</MinimalRebuild>
-      <ModuleDependenciesFile>x64\Debug\</ModuleDependenciesFile>
-      <ModuleOutputFile>x64\Debug\</ModuleOutputFile>
-      <OmitDefaultLibName>false</OmitDefaultLibName>
-      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
-      <ObjectFileName>x64\Debug\</ObjectFileName>
-      <CallingConvention>Cdecl</CallingConvention>
-      <ProgramDataBaseFileName>x64\Debug\vc143.pdb</ProgramDataBaseFileName>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>x64\Debug\HelloOpenGL.pch</PrecompiledHeaderOutputFile>
-      <PreprocessToFile>false</PreprocessToFile>
-      <PreprocessKeepComments>false</PreprocessKeepComments>
-      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
-      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
-      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
-      <ShowIncludes>false</ShowIncludes>
-      <SourceDependenciesFile>x64\Debug\</SourceDependenciesFile>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <BufferSecurityCheck>true</BufferSecurityCheck>
-      <SmallerTypeCheck>false</SmallerTypeCheck>
-      <SpectreMitigation>false</SpectreMitigation>
-      <StructMemberAlignment>Default</StructMemberAlignment>
-      <TrackerLogDirectory>x64\Debug\HelloOpenGL.tlog\</TrackerLogDirectory>
-      <TranslateIncludes>false</TranslateIncludes>
-      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
-      <TreatWarningAsError>false</TreatWarningAsError>
-      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
-      <UseFullPaths>true</UseFullPaths>
-      <WarningLevel>Level3</WarningLevel>
-      <XMLDocumentationFileName>x64\Debug\</XMLDocumentationFileName>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <IntelJCCErratum>false</IntelJCCErratum>
-      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
-      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
-      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
-      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_UNICODE;UNICODE;</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
-      <AdditionalOptions>/Zc:__cplusplus</AdditionalOptions>
-      <LinkCompiled>true</LinkCompiled>
-    </ClCompile>
-    <ClCompile Include="LearnOpenGL\Graphics\Texture2D.cpp">
-      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <Optimization>Disabled</Optimization>
-      <SupportJustMyCode>true</SupportJustMyCode>
-      <AssemblerOutput>NoListing</AssemblerOutput>
-      <AssemblerListingLocation>x64\Debug\</AssemblerListingLocation>
-      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
-      <BrowseInformation>false</BrowseInformation>
-      <BrowseInformationFile>x64\Debug\</BrowseInformationFile>
-      <CompileAs>Default</CompileAs>
-      <ConformanceMode>true</ConformanceMode>
-      <DiagnosticsFormat>Column</DiagnosticsFormat>
-      <DisableLanguageExtensions>false</DisableLanguageExtensions>
-      <ErrorReporting>Prompt</ErrorReporting>
-      <ExpandAttributedSource>false</ExpandAttributedSource>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <EnableASAN>false</EnableASAN>
-      <EnableFuzzer>false</EnableFuzzer>
-      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <FloatingPointModel>Precise</FloatingPointModel>
-      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-      <GenerateModuleDependencies>false</GenerateModuleDependencies>
-      <GenerateSourceDependencies>false</GenerateSourceDependencies>
-      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
-      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
-      <IntrinsicFunctions>false</IntrinsicFunctions>
-      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <MinimalRebuild>false</MinimalRebuild>
-      <ModuleDependenciesFile>x64\Debug\</ModuleDependenciesFile>
-      <ModuleOutputFile>x64\Debug\</ModuleOutputFile>
-      <OmitDefaultLibName>false</OmitDefaultLibName>
-      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
-      <ObjectFileName>x64\Debug\</ObjectFileName>
-      <CallingConvention>Cdecl</CallingConvention>
-      <ProgramDataBaseFileName>x64\Debug\vc143.pdb</ProgramDataBaseFileName>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>x64\Debug\HelloOpenGL.pch</PrecompiledHeaderOutputFile>
-      <PreprocessToFile>false</PreprocessToFile>
-      <PreprocessKeepComments>false</PreprocessKeepComments>
-      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
-      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
-      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
-      <ShowIncludes>false</ShowIncludes>
-      <SourceDependenciesFile>x64\Debug\</SourceDependenciesFile>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <BufferSecurityCheck>true</BufferSecurityCheck>
-      <SmallerTypeCheck>false</SmallerTypeCheck>
-      <SpectreMitigation>false</SpectreMitigation>
-      <StructMemberAlignment>Default</StructMemberAlignment>
-      <TrackerLogDirectory>x64\Debug\HelloOpenGL.tlog\</TrackerLogDirectory>
-      <TranslateIncludes>false</TranslateIncludes>
-      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
-      <TreatWarningAsError>false</TreatWarningAsError>
-      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
-      <UseFullPaths>true</UseFullPaths>
-      <WarningLevel>Level3</WarningLevel>
-      <XMLDocumentationFileName>x64\Debug\</XMLDocumentationFileName>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <IntelJCCErratum>false</IntelJCCErratum>
-      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
-      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
-      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
-      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_UNICODE;UNICODE;</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
-      <AdditionalOptions>/Zc:__cplusplus</AdditionalOptions>
-      <LinkCompiled>true</LinkCompiled>
-    </ClCompile>
-    <ClCompile Include="LearnOpenGL\Math\Transform.cpp" />
-    <ClCompile Include="LearnOpenGL\Utilities\FileUtils.cpp">
-      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <Optimization>Disabled</Optimization>
-      <SupportJustMyCode>true</SupportJustMyCode>
-      <AssemblerOutput>NoListing</AssemblerOutput>
-      <AssemblerListingLocation>x64\Debug\</AssemblerListingLocation>
-      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
-      <BrowseInformation>false</BrowseInformation>
-      <BrowseInformationFile>x64\Debug\</BrowseInformationFile>
-      <CompileAs>Default</CompileAs>
-      <ConformanceMode>true</ConformanceMode>
-      <DiagnosticsFormat>Column</DiagnosticsFormat>
-      <DisableLanguageExtensions>false</DisableLanguageExtensions>
-      <ErrorReporting>Prompt</ErrorReporting>
-      <ExpandAttributedSource>false</ExpandAttributedSource>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <EnableASAN>false</EnableASAN>
-      <EnableFuzzer>false</EnableFuzzer>
-      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <FloatingPointModel>Precise</FloatingPointModel>
-      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-      <GenerateModuleDependencies>false</GenerateModuleDependencies>
-      <GenerateSourceDependencies>false</GenerateSourceDependencies>
-      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
-      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
-      <IntrinsicFunctions>false</IntrinsicFunctions>
-      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <MinimalRebuild>false</MinimalRebuild>
-      <ModuleDependenciesFile>x64\Debug\</ModuleDependenciesFile>
-      <ModuleOutputFile>x64\Debug\</ModuleOutputFile>
-      <OmitDefaultLibName>false</OmitDefaultLibName>
-      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
-      <ObjectFileName>x64\Debug\</ObjectFileName>
-      <CallingConvention>Cdecl</CallingConvention>
-      <ProgramDataBaseFileName>x64\Debug\vc143.pdb</ProgramDataBaseFileName>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>x64\Debug\HelloOpenGL.pch</PrecompiledHeaderOutputFile>
-      <PreprocessToFile>false</PreprocessToFile>
-      <PreprocessKeepComments>false</PreprocessKeepComments>
-      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
-      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
-      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
-      <ShowIncludes>false</ShowIncludes>
-      <SourceDependenciesFile>x64\Debug\</SourceDependenciesFile>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <BufferSecurityCheck>true</BufferSecurityCheck>
-      <SmallerTypeCheck>false</SmallerTypeCheck>
-      <SpectreMitigation>false</SpectreMitigation>
-      <StructMemberAlignment>Default</StructMemberAlignment>
-      <TrackerLogDirectory>x64\Debug\HelloOpenGL.tlog\</TrackerLogDirectory>
-      <TranslateIncludes>false</TranslateIncludes>
-      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
-      <TreatWarningAsError>false</TreatWarningAsError>
-      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
-      <UseFullPaths>true</UseFullPaths>
-      <WarningLevel>Level3</WarningLevel>
-      <XMLDocumentationFileName>x64\Debug\</XMLDocumentationFileName>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <IntelJCCErratum>false</IntelJCCErratum>
-      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
-      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
-      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
-      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_UNICODE;UNICODE;</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
-      <AdditionalOptions>/Zc:__cplusplus</AdditionalOptions>
-      <LinkCompiled>true</LinkCompiled>
-    </ClCompile>
-    <ClCompile Include="LearnOpenGL\Utilities\Timer.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="fragment.glsl" />
-    <Content Include="lighting.frag" />
-    <Content Include="lightSource.frag" />
-    <Content Include="phong.frag" />
-    <Content Include="Res\container.jpg" />
-    <Content Include="Res\container2.png" />
-    <Content Include="Res\container2_specular.png" />
-    <Content Include="Res\matrix.jpg" />
-    <Content Include="Res\wall.jpg" />
-    <Content Include="vertex.glsl" />
-    <Content Include="yellowfrag.glsl" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="LearnOpenGL\Graphics\Camera.h" />
-    <ClInclude Include="LearnOpenGL\Graphics\Image.h" />
-    <ClInclude Include="LearnOpenGL\Graphics\MeshUtils.h" />
-    <ClInclude Include="LearnOpenGL\Graphics\Shader.h" />
-    <ClInclude Include="LearnOpenGL\Graphics\ShaderUtils.h" />
-    <ClInclude Include="LearnOpenGL\Graphics\Texture2D.h" />
-    <ClInclude Include="LearnOpenGL\Math\Transform.h" />
-    <ClInclude Include="LearnOpenGL\Math\Vector3.h" />
-    <ClInclude Include="LearnOpenGL\Utilities\FileUtils.h" />
-    <ClInclude Include="LearnOpenGL\Utilities\Timer.h" />
-  </ItemGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
+    <ItemGroup Label="ProjectConfigurations">
+        <ProjectConfiguration Include="Debug|Win32">
+            <Configuration>Debug</Configuration>
+            <Platform>Win32</Platform>
+        </ProjectConfiguration>
+        <ProjectConfiguration Include="Release|Win32">
+            <Configuration>Release</Configuration>
+            <Platform>Win32</Platform>
+        </ProjectConfiguration>
+        <ProjectConfiguration Include="Debug|x64">
+            <Configuration>Debug</Configuration>
+            <Platform>x64</Platform>
+        </ProjectConfiguration>
+        <ProjectConfiguration Include="Release|x64">
+            <Configuration>Release</Configuration>
+            <Platform>x64</Platform>
+        </ProjectConfiguration>
+    </ItemGroup>
+    <PropertyGroup Label="Globals">
+        <VCProjectVersion>15.0</VCProjectVersion>
+        <ProjectGuid>{9F997322-0BC7-47CA-B771-715843AD6E1D}</ProjectGuid>
+        <Keyword>Win32Proj</Keyword>
+        <RootNamespace>HelloOpenGL</RootNamespace>
+        <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    </PropertyGroup>
+    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props"/>
+    <PropertyGroup>
+        <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+        <ConfigurationType>Application</ConfigurationType>
+        <UseDebugLibraries>true</UseDebugLibraries>
+        <PlatformToolset>v143</PlatformToolset>
+        <CharacterSet>Unicode</CharacterSet>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+        <ConfigurationType>Application</ConfigurationType>
+        <UseDebugLibraries>false</UseDebugLibraries>
+        <PlatformToolset>v143</PlatformToolset>
+        <WholeProgramOptimization>true</WholeProgramOptimization>
+        <CharacterSet>Unicode</CharacterSet>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+        <ConfigurationType>Application</ConfigurationType>
+        <UseDebugLibraries>true</UseDebugLibraries>
+        <PlatformToolset>v143</PlatformToolset>
+        <CharacterSet>Unicode</CharacterSet>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+        <ConfigurationType>Application</ConfigurationType>
+        <UseDebugLibraries>false</UseDebugLibraries>
+        <PlatformToolset>v143</PlatformToolset>
+        <WholeProgramOptimization>true</WholeProgramOptimization>
+        <CharacterSet>Unicode</CharacterSet>
+    </PropertyGroup>
+    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props"/>
+    <ImportGroup Label="ExtensionSettings">
+    </ImportGroup>
+    <ImportGroup Label="Shared">
+    </ImportGroup>
+    <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+        <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform"/>
+    </ImportGroup>
+    <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+        <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform"/>
+    </ImportGroup>
+    <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+        <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform"/>
+    </ImportGroup>
+    <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+        <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform"/>
+    </ImportGroup>
+    <PropertyGroup Label="UserMacros"/>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+        <LinkIncremental>true</LinkIncremental>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+        <LinkIncremental>true</LinkIncremental>
+        <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);F:\github\lucasstarsz\HelloOpenGL\Include</IncludePath>
+        <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);F:\github\lucasstarsz\HelloOpenGL\Lib</LibraryPath>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+        <LinkIncremental>false</LinkIncremental>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+        <LinkIncremental>false</LinkIncremental>
+    </PropertyGroup>
+    <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+        <ClCompile>
+            <PrecompiledHeader>NotUsing</PrecompiledHeader>
+            <WarningLevel>Level3</WarningLevel>
+            <Optimization>Disabled</Optimization>
+            <SDLCheck>true</SDLCheck>
+            <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <ConformanceMode>true</ConformanceMode>
+            <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+            <AdditionalOptions>/Zc:__cplusplus</AdditionalOptions>
+            <LanguageStandard>stdcpp20</LanguageStandard>
+            <LanguageStandard_C>stdc17</LanguageStandard_C>
+        </ClCompile>
+        <Link>
+            <SubSystem>Console</SubSystem>
+            <GenerateDebugInformation>true</GenerateDebugInformation>
+        </Link>
+    </ItemDefinitionGroup>
+    <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+        <ClCompile>
+            <PrecompiledHeader>NotUsing</PrecompiledHeader>
+            <WarningLevel>Level3</WarningLevel>
+            <Optimization>Disabled</Optimization>
+            <SDLCheck>true</SDLCheck>
+            <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <ConformanceMode>true</ConformanceMode>
+            <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+            <AdditionalOptions>/Zc:__cplusplus</AdditionalOptions>
+            <LanguageStandard>stdcpp20</LanguageStandard>
+            <LanguageStandard_C>stdc17</LanguageStandard_C>
+        </ClCompile>
+        <Link>
+            <SubSystem>Console</SubSystem>
+            <GenerateDebugInformation>true</GenerateDebugInformation>
+            <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);opengl32.lib;glfw3.lib;assimp.lib</AdditionalDependencies>
+        </Link>
+    </ItemDefinitionGroup>
+    <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+        <ClCompile>
+            <PrecompiledHeader>NotUsing</PrecompiledHeader>
+            <WarningLevel>Level3</WarningLevel>
+            <Optimization>MaxSpeed</Optimization>
+            <FunctionLevelLinking>true</FunctionLevelLinking>
+            <IntrinsicFunctions>true</IntrinsicFunctions>
+            <SDLCheck>true</SDLCheck>
+            <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <ConformanceMode>true</ConformanceMode>
+            <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+            <AdditionalOptions>/Zc:__cplusplus</AdditionalOptions>
+            <LanguageStandard>stdcpp20</LanguageStandard>
+            <LanguageStandard_C>stdc17</LanguageStandard_C>
+        </ClCompile>
+        <Link>
+            <SubSystem>Console</SubSystem>
+            <EnableCOMDATFolding>true</EnableCOMDATFolding>
+            <OptimizeReferences>true</OptimizeReferences>
+            <GenerateDebugInformation>true</GenerateDebugInformation>
+        </Link>
+    </ItemDefinitionGroup>
+    <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+        <ClCompile>
+            <PrecompiledHeader>NotUsing</PrecompiledHeader>
+            <WarningLevel>Level3</WarningLevel>
+            <Optimization>MaxSpeed</Optimization>
+            <FunctionLevelLinking>true</FunctionLevelLinking>
+            <IntrinsicFunctions>true</IntrinsicFunctions>
+            <SDLCheck>true</SDLCheck>
+            <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <ConformanceMode>true</ConformanceMode>
+            <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+            <AdditionalOptions>/Zc:__cplusplus</AdditionalOptions>
+            <LanguageStandard>stdcpp20</LanguageStandard>
+            <LanguageStandard_C>stdc17</LanguageStandard_C>
+        </ClCompile>
+        <Link>
+            <SubSystem>Console</SubSystem>
+            <EnableCOMDATFolding>true</EnableCOMDATFolding>
+            <OptimizeReferences>true</OptimizeReferences>
+            <GenerateDebugInformation>true</GenerateDebugInformation>
+        </Link>
+    </ItemDefinitionGroup>
+    <ItemGroup>
+        <ClCompile Include="glad.c"/>
+        <ClCompile Include="HelloOpenGL.cpp"/>
+        <ClCompile Include="LearnOpenGL\Graphics\Camera.cpp"/>
+        <ClCompile Include="LearnOpenGL\Graphics\Image.cpp">
+            <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
+            <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+            <Optimization>Disabled</Optimization>
+            <SupportJustMyCode>true</SupportJustMyCode>
+            <AssemblerOutput>NoListing</AssemblerOutput>
+            <AssemblerListingLocation>x64\Debug\</AssemblerListingLocation>
+            <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+            <BrowseInformation>false</BrowseInformation>
+            <BrowseInformationFile>x64\Debug\</BrowseInformationFile>
+            <CompileAs>Default</CompileAs>
+            <ConformanceMode>true</ConformanceMode>
+            <DiagnosticsFormat>Column</DiagnosticsFormat>
+            <DisableLanguageExtensions>false</DisableLanguageExtensions>
+            <ErrorReporting>Prompt</ErrorReporting>
+            <ExpandAttributedSource>false</ExpandAttributedSource>
+            <ExceptionHandling>Sync</ExceptionHandling>
+            <EnableASAN>false</EnableASAN>
+            <EnableFuzzer>false</EnableFuzzer>
+            <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+            <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+            <FloatingPointModel>Precise</FloatingPointModel>
+            <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+            <GenerateModuleDependencies>false</GenerateModuleDependencies>
+            <GenerateSourceDependencies>false</GenerateSourceDependencies>
+            <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+            <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+            <IntrinsicFunctions>false</IntrinsicFunctions>
+            <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+            <LanguageStandard>stdcpp20</LanguageStandard>
+            <LanguageStandard_C>stdc17</LanguageStandard_C>
+            <MinimalRebuild>false</MinimalRebuild>
+            <ModuleDependenciesFile>x64\Debug\</ModuleDependenciesFile>
+            <ModuleOutputFile>x64\Debug\</ModuleOutputFile>
+            <OmitDefaultLibName>false</OmitDefaultLibName>
+            <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+            <WholeProgramOptimization>false</WholeProgramOptimization>
+            <ObjectFileName>x64\Debug\</ObjectFileName>
+            <CallingConvention>Cdecl</CallingConvention>
+            <ProgramDataBaseFileName>x64\Debug\vc143.pdb</ProgramDataBaseFileName>
+            <PrecompiledHeader>NotUsing</PrecompiledHeader>
+            <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+            <PrecompiledHeaderOutputFile>x64\Debug\HelloOpenGL.pch</PrecompiledHeaderOutputFile>
+            <PreprocessToFile>false</PreprocessToFile>
+            <PreprocessKeepComments>false</PreprocessKeepComments>
+            <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+            <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+            <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+            <ShowIncludes>false</ShowIncludes>
+            <SourceDependenciesFile>x64\Debug\</SourceDependenciesFile>
+            <SuppressStartupBanner>true</SuppressStartupBanner>
+            <BufferSecurityCheck>true</BufferSecurityCheck>
+            <SmallerTypeCheck>false</SmallerTypeCheck>
+            <SpectreMitigation>false</SpectreMitigation>
+            <StructMemberAlignment>Default</StructMemberAlignment>
+            <TrackerLogDirectory>x64\Debug\HelloOpenGL.tlog\</TrackerLogDirectory>
+            <TranslateIncludes>false</TranslateIncludes>
+            <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+            <TreatWarningAsError>false</TreatWarningAsError>
+            <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+            <UseFullPaths>true</UseFullPaths>
+            <WarningLevel>Level3</WarningLevel>
+            <XMLDocumentationFileName>x64\Debug\</XMLDocumentationFileName>
+            <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+            <IntelJCCErratum>false</IntelJCCErratum>
+            <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
+            <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
+            <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
+            <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
+            <PreprocessorDefinitions>_DEBUG;_CONSOLE;_UNICODE;UNICODE;</PreprocessorDefinitions>
+            <SDLCheck>true</SDLCheck>
+            <AdditionalOptions>/Zc:__cplusplus</AdditionalOptions>
+            <LinkCompiled>true</LinkCompiled>
+        </ClCompile>
+        <ClCompile Include="LearnOpenGL\Graphics\MeshUtils.cpp"/>
+        <ClCompile Include="LearnOpenGL\Graphics\Shader.cpp">
+            <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
+            <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+            <Optimization>Disabled</Optimization>
+            <SupportJustMyCode>true</SupportJustMyCode>
+            <AssemblerOutput>NoListing</AssemblerOutput>
+            <AssemblerListingLocation>x64\Debug\</AssemblerListingLocation>
+            <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+            <BrowseInformation>false</BrowseInformation>
+            <BrowseInformationFile>x64\Debug\</BrowseInformationFile>
+            <CompileAs>Default</CompileAs>
+            <ConformanceMode>true</ConformanceMode>
+            <DiagnosticsFormat>Column</DiagnosticsFormat>
+            <DisableLanguageExtensions>false</DisableLanguageExtensions>
+            <ErrorReporting>Prompt</ErrorReporting>
+            <ExpandAttributedSource>false</ExpandAttributedSource>
+            <ExceptionHandling>Sync</ExceptionHandling>
+            <EnableASAN>false</EnableASAN>
+            <EnableFuzzer>false</EnableFuzzer>
+            <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+            <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+            <FloatingPointModel>Precise</FloatingPointModel>
+            <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+            <GenerateModuleDependencies>false</GenerateModuleDependencies>
+            <GenerateSourceDependencies>false</GenerateSourceDependencies>
+            <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+            <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+            <IntrinsicFunctions>false</IntrinsicFunctions>
+            <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+            <LanguageStandard>stdcpp20</LanguageStandard>
+            <LanguageStandard_C>stdc17</LanguageStandard_C>
+            <MinimalRebuild>false</MinimalRebuild>
+            <ModuleDependenciesFile>x64\Debug\</ModuleDependenciesFile>
+            <ModuleOutputFile>x64\Debug\</ModuleOutputFile>
+            <OmitDefaultLibName>false</OmitDefaultLibName>
+            <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+            <WholeProgramOptimization>false</WholeProgramOptimization>
+            <ObjectFileName>x64\Debug\</ObjectFileName>
+            <CallingConvention>Cdecl</CallingConvention>
+            <ProgramDataBaseFileName>x64\Debug\vc143.pdb</ProgramDataBaseFileName>
+            <PrecompiledHeader>NotUsing</PrecompiledHeader>
+            <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+            <PrecompiledHeaderOutputFile>x64\Debug\HelloOpenGL.pch</PrecompiledHeaderOutputFile>
+            <PreprocessToFile>false</PreprocessToFile>
+            <PreprocessKeepComments>false</PreprocessKeepComments>
+            <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+            <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+            <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+            <ShowIncludes>false</ShowIncludes>
+            <SourceDependenciesFile>x64\Debug\</SourceDependenciesFile>
+            <SuppressStartupBanner>true</SuppressStartupBanner>
+            <BufferSecurityCheck>true</BufferSecurityCheck>
+            <SmallerTypeCheck>false</SmallerTypeCheck>
+            <SpectreMitigation>false</SpectreMitigation>
+            <StructMemberAlignment>Default</StructMemberAlignment>
+            <TrackerLogDirectory>x64\Debug\HelloOpenGL.tlog\</TrackerLogDirectory>
+            <TranslateIncludes>false</TranslateIncludes>
+            <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+            <TreatWarningAsError>false</TreatWarningAsError>
+            <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+            <UseFullPaths>true</UseFullPaths>
+            <WarningLevel>Level3</WarningLevel>
+            <XMLDocumentationFileName>x64\Debug\</XMLDocumentationFileName>
+            <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+            <IntelJCCErratum>false</IntelJCCErratum>
+            <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
+            <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
+            <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
+            <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
+            <PreprocessorDefinitions>_DEBUG;_CONSOLE;_UNICODE;UNICODE;</PreprocessorDefinitions>
+            <SDLCheck>true</SDLCheck>
+            <AdditionalOptions>/Zc:__cplusplus</AdditionalOptions>
+            <LinkCompiled>true</LinkCompiled>
+        </ClCompile>
+        <ClCompile Include="LearnOpenGL\Graphics\ShaderUtils.cpp">
+            <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
+            <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+            <Optimization>Disabled</Optimization>
+            <SupportJustMyCode>true</SupportJustMyCode>
+            <AssemblerOutput>NoListing</AssemblerOutput>
+            <AssemblerListingLocation>x64\Debug\</AssemblerListingLocation>
+            <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+            <BrowseInformation>false</BrowseInformation>
+            <BrowseInformationFile>x64\Debug\</BrowseInformationFile>
+            <CompileAs>Default</CompileAs>
+            <ConformanceMode>true</ConformanceMode>
+            <DiagnosticsFormat>Column</DiagnosticsFormat>
+            <DisableLanguageExtensions>false</DisableLanguageExtensions>
+            <ErrorReporting>Prompt</ErrorReporting>
+            <ExpandAttributedSource>false</ExpandAttributedSource>
+            <ExceptionHandling>Sync</ExceptionHandling>
+            <EnableASAN>false</EnableASAN>
+            <EnableFuzzer>false</EnableFuzzer>
+            <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+            <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+            <FloatingPointModel>Precise</FloatingPointModel>
+            <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+            <GenerateModuleDependencies>false</GenerateModuleDependencies>
+            <GenerateSourceDependencies>false</GenerateSourceDependencies>
+            <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+            <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+            <IntrinsicFunctions>false</IntrinsicFunctions>
+            <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+            <LanguageStandard>stdcpp20</LanguageStandard>
+            <LanguageStandard_C>stdc17</LanguageStandard_C>
+            <MinimalRebuild>false</MinimalRebuild>
+            <ModuleDependenciesFile>x64\Debug\</ModuleDependenciesFile>
+            <ModuleOutputFile>x64\Debug\</ModuleOutputFile>
+            <OmitDefaultLibName>false</OmitDefaultLibName>
+            <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+            <WholeProgramOptimization>false</WholeProgramOptimization>
+            <ObjectFileName>x64\Debug\</ObjectFileName>
+            <CallingConvention>Cdecl</CallingConvention>
+            <ProgramDataBaseFileName>x64\Debug\vc143.pdb</ProgramDataBaseFileName>
+            <PrecompiledHeader>NotUsing</PrecompiledHeader>
+            <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+            <PrecompiledHeaderOutputFile>x64\Debug\HelloOpenGL.pch</PrecompiledHeaderOutputFile>
+            <PreprocessToFile>false</PreprocessToFile>
+            <PreprocessKeepComments>false</PreprocessKeepComments>
+            <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+            <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+            <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+            <ShowIncludes>false</ShowIncludes>
+            <SourceDependenciesFile>x64\Debug\</SourceDependenciesFile>
+            <SuppressStartupBanner>true</SuppressStartupBanner>
+            <BufferSecurityCheck>true</BufferSecurityCheck>
+            <SmallerTypeCheck>false</SmallerTypeCheck>
+            <SpectreMitigation>false</SpectreMitigation>
+            <StructMemberAlignment>Default</StructMemberAlignment>
+            <TrackerLogDirectory>x64\Debug\HelloOpenGL.tlog\</TrackerLogDirectory>
+            <TranslateIncludes>false</TranslateIncludes>
+            <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+            <TreatWarningAsError>false</TreatWarningAsError>
+            <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+            <UseFullPaths>true</UseFullPaths>
+            <WarningLevel>Level3</WarningLevel>
+            <XMLDocumentationFileName>x64\Debug\</XMLDocumentationFileName>
+            <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+            <IntelJCCErratum>false</IntelJCCErratum>
+            <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
+            <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
+            <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
+            <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
+            <PreprocessorDefinitions>_DEBUG;_CONSOLE;_UNICODE;UNICODE;</PreprocessorDefinitions>
+            <SDLCheck>true</SDLCheck>
+            <AdditionalOptions>/Zc:__cplusplus</AdditionalOptions>
+            <LinkCompiled>true</LinkCompiled>
+        </ClCompile>
+        <ClCompile Include="LearnOpenGL\Graphics\Texture2D.cpp">
+            <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
+            <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+            <Optimization>Disabled</Optimization>
+            <SupportJustMyCode>true</SupportJustMyCode>
+            <AssemblerOutput>NoListing</AssemblerOutput>
+            <AssemblerListingLocation>x64\Debug\</AssemblerListingLocation>
+            <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+            <BrowseInformation>false</BrowseInformation>
+            <BrowseInformationFile>x64\Debug\</BrowseInformationFile>
+            <CompileAs>Default</CompileAs>
+            <ConformanceMode>true</ConformanceMode>
+            <DiagnosticsFormat>Column</DiagnosticsFormat>
+            <DisableLanguageExtensions>false</DisableLanguageExtensions>
+            <ErrorReporting>Prompt</ErrorReporting>
+            <ExpandAttributedSource>false</ExpandAttributedSource>
+            <ExceptionHandling>Sync</ExceptionHandling>
+            <EnableASAN>false</EnableASAN>
+            <EnableFuzzer>false</EnableFuzzer>
+            <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+            <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+            <FloatingPointModel>Precise</FloatingPointModel>
+            <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+            <GenerateModuleDependencies>false</GenerateModuleDependencies>
+            <GenerateSourceDependencies>false</GenerateSourceDependencies>
+            <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+            <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+            <IntrinsicFunctions>false</IntrinsicFunctions>
+            <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+            <LanguageStandard>stdcpp20</LanguageStandard>
+            <LanguageStandard_C>stdc17</LanguageStandard_C>
+            <MinimalRebuild>false</MinimalRebuild>
+            <ModuleDependenciesFile>x64\Debug\</ModuleDependenciesFile>
+            <ModuleOutputFile>x64\Debug\</ModuleOutputFile>
+            <OmitDefaultLibName>false</OmitDefaultLibName>
+            <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+            <WholeProgramOptimization>false</WholeProgramOptimization>
+            <ObjectFileName>x64\Debug\</ObjectFileName>
+            <CallingConvention>Cdecl</CallingConvention>
+            <ProgramDataBaseFileName>x64\Debug\vc143.pdb</ProgramDataBaseFileName>
+            <PrecompiledHeader>NotUsing</PrecompiledHeader>
+            <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+            <PrecompiledHeaderOutputFile>x64\Debug\HelloOpenGL.pch</PrecompiledHeaderOutputFile>
+            <PreprocessToFile>false</PreprocessToFile>
+            <PreprocessKeepComments>false</PreprocessKeepComments>
+            <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+            <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+            <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+            <ShowIncludes>false</ShowIncludes>
+            <SourceDependenciesFile>x64\Debug\</SourceDependenciesFile>
+            <SuppressStartupBanner>true</SuppressStartupBanner>
+            <BufferSecurityCheck>true</BufferSecurityCheck>
+            <SmallerTypeCheck>false</SmallerTypeCheck>
+            <SpectreMitigation>false</SpectreMitigation>
+            <StructMemberAlignment>Default</StructMemberAlignment>
+            <TrackerLogDirectory>x64\Debug\HelloOpenGL.tlog\</TrackerLogDirectory>
+            <TranslateIncludes>false</TranslateIncludes>
+            <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+            <TreatWarningAsError>false</TreatWarningAsError>
+            <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+            <UseFullPaths>true</UseFullPaths>
+            <WarningLevel>Level3</WarningLevel>
+            <XMLDocumentationFileName>x64\Debug\</XMLDocumentationFileName>
+            <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+            <IntelJCCErratum>false</IntelJCCErratum>
+            <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
+            <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
+            <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
+            <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
+            <PreprocessorDefinitions>_DEBUG;_CONSOLE;_UNICODE;UNICODE;</PreprocessorDefinitions>
+            <SDLCheck>true</SDLCheck>
+            <AdditionalOptions>/Zc:__cplusplus</AdditionalOptions>
+            <LinkCompiled>true</LinkCompiled>
+        </ClCompile>
+        <ClCompile Include="LearnOpenGL\Math\Transform.cpp"/>
+        <ClCompile Include="LearnOpenGL\Model\Mesh.cpp"/>
+        <ClCompile Include="LearnOpenGL\Model\Model.cpp"/>
+        <ClCompile Include="LearnOpenGL\Model\Texture.cpp"/>
+        <ClCompile Include="LearnOpenGL\Model\Vertex.cpp"/>
+        <ClCompile Include="LearnOpenGL\Utilities\FileUtils.cpp">
+            <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
+            <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+            <Optimization>Disabled</Optimization>
+            <SupportJustMyCode>true</SupportJustMyCode>
+            <AssemblerOutput>NoListing</AssemblerOutput>
+            <AssemblerListingLocation>x64\Debug\</AssemblerListingLocation>
+            <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+            <BrowseInformation>false</BrowseInformation>
+            <BrowseInformationFile>x64\Debug\</BrowseInformationFile>
+            <CompileAs>Default</CompileAs>
+            <ConformanceMode>true</ConformanceMode>
+            <DiagnosticsFormat>Column</DiagnosticsFormat>
+            <DisableLanguageExtensions>false</DisableLanguageExtensions>
+            <ErrorReporting>Prompt</ErrorReporting>
+            <ExpandAttributedSource>false</ExpandAttributedSource>
+            <ExceptionHandling>Sync</ExceptionHandling>
+            <EnableASAN>false</EnableASAN>
+            <EnableFuzzer>false</EnableFuzzer>
+            <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+            <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+            <FloatingPointModel>Precise</FloatingPointModel>
+            <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+            <GenerateModuleDependencies>false</GenerateModuleDependencies>
+            <GenerateSourceDependencies>false</GenerateSourceDependencies>
+            <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+            <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+            <IntrinsicFunctions>false</IntrinsicFunctions>
+            <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+            <LanguageStandard>stdcpp20</LanguageStandard>
+            <LanguageStandard_C>stdc17</LanguageStandard_C>
+            <MinimalRebuild>false</MinimalRebuild>
+            <ModuleDependenciesFile>x64\Debug\</ModuleDependenciesFile>
+            <ModuleOutputFile>x64\Debug\</ModuleOutputFile>
+            <OmitDefaultLibName>false</OmitDefaultLibName>
+            <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+            <WholeProgramOptimization>false</WholeProgramOptimization>
+            <ObjectFileName>x64\Debug\</ObjectFileName>
+            <CallingConvention>Cdecl</CallingConvention>
+            <ProgramDataBaseFileName>x64\Debug\vc143.pdb</ProgramDataBaseFileName>
+            <PrecompiledHeader>NotUsing</PrecompiledHeader>
+            <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+            <PrecompiledHeaderOutputFile>x64\Debug\HelloOpenGL.pch</PrecompiledHeaderOutputFile>
+            <PreprocessToFile>false</PreprocessToFile>
+            <PreprocessKeepComments>false</PreprocessKeepComments>
+            <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+            <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+            <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+            <ShowIncludes>false</ShowIncludes>
+            <SourceDependenciesFile>x64\Debug\</SourceDependenciesFile>
+            <SuppressStartupBanner>true</SuppressStartupBanner>
+            <BufferSecurityCheck>true</BufferSecurityCheck>
+            <SmallerTypeCheck>false</SmallerTypeCheck>
+            <SpectreMitigation>false</SpectreMitigation>
+            <StructMemberAlignment>Default</StructMemberAlignment>
+            <TrackerLogDirectory>x64\Debug\HelloOpenGL.tlog\</TrackerLogDirectory>
+            <TranslateIncludes>false</TranslateIncludes>
+            <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+            <TreatWarningAsError>false</TreatWarningAsError>
+            <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+            <UseFullPaths>true</UseFullPaths>
+            <WarningLevel>Level3</WarningLevel>
+            <XMLDocumentationFileName>x64\Debug\</XMLDocumentationFileName>
+            <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+            <IntelJCCErratum>false</IntelJCCErratum>
+            <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
+            <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
+            <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
+            <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
+            <PreprocessorDefinitions>_DEBUG;_CONSOLE;_UNICODE;UNICODE;</PreprocessorDefinitions>
+            <SDLCheck>true</SDLCheck>
+            <AdditionalOptions>/Zc:__cplusplus</AdditionalOptions>
+            <LinkCompiled>true</LinkCompiled>
+        </ClCompile>
+        <ClCompile Include="LearnOpenGL\Utilities\Timer.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <Content Include="fragment.glsl"/>
+        <Content Include="lighting.frag"/>
+        <Content Include="lightSource.frag"/>
+        <Content Include="phong.frag"/>
+        <Content Include="Res\container.jpg"/>
+        <Content Include="Res\container2.png"/>
+        <Content Include="Res\container2_specular.png"/>
+        <Content Include="Res\matrix.jpg"/>
+        <Content Include="Res\wall.jpg"/>
+        <Content Include="vertex.glsl"/>
+        <Content Include="yellowfrag.glsl"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="LearnOpenGL\Graphics\Camera.h"/>
+        <ClInclude Include="LearnOpenGL\Graphics\Image.h"/>
+        <ClInclude Include="LearnOpenGL\Graphics\MeshUtils.h"/>
+        <ClInclude Include="LearnOpenGL\Graphics\Shader.h"/>
+        <ClInclude Include="LearnOpenGL\Graphics\ShaderUtils.h"/>
+        <ClInclude Include="LearnOpenGL\Graphics\Texture2D.h"/>
+        <ClInclude Include="LearnOpenGL\Math\Transform.h"/>
+        <ClInclude Include="LearnOpenGL\Math\Vector3.h"/>
+        <ClInclude Include="LearnOpenGL\Model\Mesh.h"/>
+        <ClInclude Include="LearnOpenGL\Model\Model.h"/>
+        <ClInclude Include="LearnOpenGL\Model\Texture.h"/>
+        <ClInclude Include="LearnOpenGL\Model\Vertex.h"/>
+        <ClInclude Include="LearnOpenGL\Utilities\FileUtils.h"/>
+        <ClInclude Include="LearnOpenGL\Utilities\Timer.h"/>
+    </ItemGroup>
+    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets"/>
+    <ImportGroup Label="ExtensionTargets">
+    </ImportGroup>
 </Project>

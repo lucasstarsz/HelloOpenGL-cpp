@@ -1,6 +1,6 @@
 ﻿#pragma once
-#ifndef TEXTURE_H
-#define TEXTURE_H
+#ifndef TEXTURE_2D_H
+#define TEXTURE_2D_H
 #include <string>
 #include <unordered_map>
 #include <glad/glad.h>
