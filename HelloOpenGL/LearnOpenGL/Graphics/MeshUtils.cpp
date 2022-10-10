@@ -1,5 +1,7 @@
 ﻿#include "MeshUtils.h"
 
+#include <glm/detail/func_geometric.inl>
+
 namespace LearnOpenGL::Graphics
 {
     std::pair<std::vector<float>, std::vector<unsigned int>> generateCube(const glm::vec3& position, const float scale,
@@ -115,6 +117,41 @@ namespace LearnOpenGL::Graphics
 
                 20, 21, 22,
                 22, 23, 20
+            }
+        };
+    }
+
+    std::pair<std::vector<float>, std::vector<unsigned int>> generateFloor(const glm::vec3& position, const float scale,
+                                                                           const bool textureCoords)
+    {
+        std::vector<float> vertices;
+
+        if (textureCoords)
+        {
+            vertices =
+            {
+                position.x - scale, position.y, position.z + scale, 0.0f, 0.0f,
+                position.x + scale, position.y, position.z + scale, 1.0f, 0.0f,
+                position.x + scale, position.y, position.z - scale, 1.0f, 1.0f,
+                position.x - scale, position.y, position.z - scale, 0.0f, 1.0f
+            };
+        }
+        else
+        {
+            vertices =
+            {
+                position.x - scale, position.y, position.z + scale,
+                position.x + scale, position.y, position.z + scale,
+                position.x + scale, position.y, position.z - scale,
+                position.x - scale, position.y, position.z - scale,
+            };
+        }
+
+        return {
+            vertices,
+            {
+                0, 1, 2,
+                2, 3, 0
             }
         };
     }

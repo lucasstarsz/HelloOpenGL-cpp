@@ -171,6 +171,7 @@
   <ItemGroup>
     <ClCompile Include="glad.c" />
     <ClCompile Include="HelloOpenGL.cpp" />
+    <ClCompile Include="LearnOpenGL\Graphics\Camera.cpp" />
     <ClCompile Include="LearnOpenGL\Graphics\Image.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -543,6 +544,7 @@
       <AdditionalOptions>/Zc:__cplusplus</AdditionalOptions>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
+    <ClCompile Include="LearnOpenGL\Utilities\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fragment.glsl" />
@@ -550,6 +552,7 @@
     <Content Include="yellowfrag.glsl" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="LearnOpenGL\Graphics\Camera.h" />
     <ClInclude Include="LearnOpenGL\Graphics\Image.h" />
     <ClInclude Include="LearnOpenGL\Graphics\MeshUtils.h" />
     <ClInclude Include="LearnOpenGL\Graphics\Shader.h" />
@@ -558,6 +561,7 @@
     <ClInclude Include="LearnOpenGL\Math\Transform.h" />
     <ClInclude Include="LearnOpenGL\Math\Vector3.h" />
     <ClInclude Include="LearnOpenGL\Utilities\FileUtils.h" />
+    <ClInclude Include="LearnOpenGL\Utilities\Timer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
