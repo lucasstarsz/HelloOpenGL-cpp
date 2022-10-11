@@ -21,8 +21,8 @@ namespace LearnOpenGL::Model
         unsigned int specularNr = 1;
         for (unsigned int i = 0; i < textures.size(); i++)
         {
-            glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
-            // retrieve texture number (the N in diffuse_textureN)
+            glActiveTexture(GL_TEXTURE0 + i);
+
             std::string number;
             std::string name = textures[i].type;
             if (name == "diffuse")
@@ -34,9 +34,7 @@ namespace LearnOpenGL::Model
                 number = std::to_string(specularNr++);
             }
 
-            // now set the sampler to the correct texture unit
             shader.setInt(std::string("material.").append(name).append(number), i);
-            // and finally bind the texture
             glBindTexture(GL_TEXTURE_2D, textures[i].id);
         }
 
@@ -44,39 +42,21 @@ namespace LearnOpenGL::Model
         {
             shader.setVec3("material.diffuseColor", material.diffuseColor);
             shader.setVec3("material.specularColor", material.specularColor);
+            shader.setVec3("material.emissionColor", material.emissionColor);
             shader.setFloat("material.shininess", material.shininess);
         }
-
-        glActiveTexture(GL_TEXTURE0);
 
         glBindVertexArray(_vao);
         glDrawElements(GL_TRIANGLES, static_cast<int>(indices.size()), GL_UNSIGNED_INT, nullptr);
 
         // unbind all
         glBindVertexArray(0);
-        
-        // bind appropriate textures
-        unsigned int diffuseNr2 = 1;
-        unsigned int specularNr2 = 1;
+
+        // unbind textures
         for (unsigned int i = 0; i < textures.size(); i++)
         {
-            glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
-            // retrieve texture number (the N in diffuse_textureN)
-            std::string number;
-            std::string name = textures[i].type;
-            if (name == "diffuse")
-            {
-                number = std::to_string(diffuseNr2++);
-            }
-            else if (name == "specular")
-            {
-                number = std::to_string(specularNr2++);
-            }
-
-            // now set the sampler to the correct texture unit
-            shader.setInt(std::string("material.").append(name).append(number), i);
-            // and finally bind the texture
-            glBindTexture(GL_TEXTURE_2D, textures[i].id);
+            glActiveTexture(GL_TEXTURE0 + i);
+            glBindTexture(GL_TEXTURE_2D, 0);
         }
     }
 

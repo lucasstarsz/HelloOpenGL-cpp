@@ -162,15 +162,18 @@ namespace LearnOpenGL::Model
         aiMaterial->Get(AI_MATKEY_COLOR_SPECULAR, color);
         const auto specular = glm::vec3(color.r, color.g, color.b);
 
+        aiMaterial->Get(AI_MATKEY_COLOR_EMISSIVE, color);
+        const auto emission = glm::vec3(color.r, color.g, color.b);
+
         aiMaterial->Get(AI_MATKEY_SHININESS, shininess);
 
         if (debugLogging)
         {
-            std::cerr << "Diffuse Material: " << to_string(diffuse) << ", Specular Material: " << to_string(specular) << ", Shininess: " <<
-                shininess << '\n';
+            std::cerr << "Diffuse Material: " << to_string(diffuse) << ", Emissive Material: " << to_string(emission) <<
+                ", Specular Material: " << to_string(specular) << ", Shininess: " << shininess << '\n';
         }
 
-        return { diffuse, specular, shininess };
+        return { diffuse, specular, emission, shininess };
     }
 
     std::vector<Texture> Model::loadMaterialTextures(const aiMaterial* mat, const aiTextureType type, const std::string& typeName)

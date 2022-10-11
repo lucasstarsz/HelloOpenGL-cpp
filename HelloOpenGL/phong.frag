@@ -6,6 +6,7 @@ struct Material
     sampler2D specular1;
     vec3 diffuseColor;
     vec3 specularColor;
+    vec3 emissionColor;
     float shininess;
 };
 
@@ -57,6 +58,7 @@ const float gamma = 2.2;
 vec3 calculateDirectionalLight(DirectionalLight directionalLight, vec3 normalizedNormal, vec3 viewDirection);
 vec3 calculateSpotLight(SpotLight spotLight, vec3 normal, vec3 fragmentPosition, vec3 viewDirection);
 vec3 calculatePointLight(PointLight pointLight, vec3 normalizedNormal, vec3 fragmentPosition, vec3 viewDirection);
+vec3 calculateEmission();
 
 void main()
 {
@@ -71,6 +73,8 @@ void main()
     {
         colorOutput += clamp(calculatePointLight(pointLights[i], normalizedNormal, fragmentPosition, viewDirection), 0.0f, 1.0f);
     }
+
+    colorOutput += calculateEmission();
 
     fragmentColor = vec4(colorOutput, 1.0f);
 }
@@ -127,4 +131,10 @@ vec3 calculatePointLight(PointLight pointLight, vec3 normalizedNormal, vec3 frag
     vec3 specular = (attenuation * specularImpact) * pointLight.specular * clamp(texture(material.specular1, textureCoordinates).rgb + material.specularColor, 0.0f, 1.0f);
 
     return ambient + diffuse + specular;
+}
+
+vec3 calculateEmission()
+{
+    vec3 emission = material.emissionColor;
+    return emission;
 }

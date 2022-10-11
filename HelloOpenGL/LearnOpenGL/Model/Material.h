@@ -11,6 +11,7 @@ namespace LearnOpenGL::Model
     {
         glm::vec3 diffuseColor = glm::vec3(0.0f);
         glm::vec3 specularColor = glm::vec3(0.0f);
+        glm::vec3 emissionColor = glm::vec3(0.0f);
         float shininess = 0.5f;
     };
 }
