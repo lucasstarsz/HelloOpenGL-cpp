@@ -18,6 +18,7 @@ namespace LearnOpenGL::Model
     public:
         explicit Model(const std::string& modelPath);
         void draw(const Graphics::Shader& shader) const;
+        inline static bool debugLogging = false;
 
     private:
         std::vector<Mesh> _meshes;

@@ -1,5 +1,6 @@
 ﻿#include "Mesh.h"
 
+#include <iostream>
 #include <string>
 #include <glad/glad.h>
 
@@ -15,20 +16,37 @@ namespace LearnOpenGL::Model
 
     void Mesh::draw(const Graphics::Shader& shader) const
     {
-        for (int i = 0; i < static_cast<int>(textures.size()); i++)
+        // bind appropriate textures
+        unsigned int diffuseNr = 1;
+        unsigned int specularNr = 1;
+        for (unsigned int i = 0; i < textures.size(); i++)
         {
-            glActiveTexture(GL_TEXTURE0 + i);
+            glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
+            // retrieve texture number (the N in diffuse_textureN)
+            std::string number;
             std::string name = textures[i].type;
+            if (name == "diffuse")
+            {
+                number = std::to_string(diffuseNr++);
+            }
+            else if (name == "specular")
+            {
+                number = std::to_string(specularNr++);
+            }
 
-            shader.setInt(std::string("material.").append(name), i);
+            // now set the sampler to the correct texture unit
+            shader.setInt(std::string("material.").append(name).append(number), i);
+            // and finally bind the texture
             glBindTexture(GL_TEXTURE_2D, textures[i].id);
+            // std::cout << std::string("material.").append(name).append(number) << "\n";
         }
 
-        shader.setVec3("material.ambient", material.ambient);
-        shader.setVec3("material.diffuse", material.diffuse);
-        shader.setVec3("material.emission", material.emission);
-        shader.setVec3("material.specular", material.specular);
-        shader.setFloat("material.shininess", material.shininess);
+        if (textures.empty())
+        {
+            shader.setVec3("material.diffuseColor", material.diffuseColor);
+            shader.setVec3("material.specularColor", material.specularColor);
+            shader.setFloat("material.shininess", material.shininess);
+        }
 
         glActiveTexture(GL_TEXTURE0);
 

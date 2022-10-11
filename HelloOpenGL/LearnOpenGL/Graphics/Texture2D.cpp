@@ -7,7 +7,7 @@
 
 namespace LearnOpenGL::Graphics
 {
-    Texture2D::Texture2D(const std::string& texturePath, const bool useMipmaps)
+    Texture2D::Texture2D(const std::string& texturePath, const bool useMipmaps, const bool useSRGB)
     {
         glGenTextures(1, &_textureId);
 
@@ -30,10 +30,20 @@ namespace LearnOpenGL::Graphics
             if (numberChannels == 3)
             {
                 format = GL_RGB;
+
+                if (useSRGB)
+                {
+                    format = GL_SRGB;
+                }
             }
             else if (numberChannels == 4)
             {
                 format = GL_RGBA;
+
+                if (useSRGB)
+                {
+                    format = GL_SRGB_ALPHA;
+                }
             }
             else
             {

@@ -9,11 +9,9 @@ namespace LearnOpenGL::Model
 {
     struct Material
     {
-        glm::vec3 ambient;
-        glm::vec3 diffuse;
-        glm::vec3 specular;
-        glm::vec3 emission;
-        float shininess;
+        glm::vec3 diffuseColor = glm::vec3(0.0f);
+        glm::vec3 specularColor = glm::vec3(0.0f);
+        float shininess = 0.5f;
     };
 }
 

@@ -12,7 +12,7 @@ namespace LearnOpenGL::Graphics
     class Texture2D
     {
     public:
-        explicit Texture2D(const std::string& texturePath, bool useMipmaps = false);
+        explicit Texture2D(const std::string& texturePath, bool useMipmaps = false, bool useSRGB = false);
         Texture2D(const Texture2D& other);
         Texture2D(Texture2D&&) noexcept = default;
 

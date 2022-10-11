@@ -7,7 +7,6 @@
 #include <stb/stb_image.h>
 
 #include "LearnOpenGL/Graphics/Camera.h"
-#include "LearnOpenGL/Graphics/MeshUtils.h"
 #include "LearnOpenGL/Graphics/Shader.h"
 #include "LearnOpenGL/Graphics/Texture2D.h"
 #include "LearnOpenGL/Math/Transform.h"
@@ -94,22 +93,6 @@ int main()
     std::cerr << "shader\n";
 
     const Shader shader("vertex.glsl", "phong.frag");
-    const Shader shaderNoTexture("vertex.glsl", "phong_notexture.frag");
-    const Shader lightSourceShader("vertex.glsl", "lightSource.frag");
-    std::cerr << "textures\n";
-
-    const Texture2D diffuseMap("Res/container2.png", true);
-    diffuseMap.setTextureWrap(GL_REPEAT, GL_REPEAT);
-    diffuseMap.setTextureFilters(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
-
-    const Texture2D specularMap("Res/container2_specular.png", true);
-    specularMap.setTextureWrap(GL_REPEAT, GL_REPEAT);
-    specularMap.setTextureFilters(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
-
-    const Texture2D emissionMap("Res/matrix.jpg", true);
-    emissionMap.setTextureWrap(GL_REPEAT, GL_REPEAT);
-    emissionMap.setTextureFilters(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
-
     constexpr glm::vec3 pointLightPositions[] = {
         glm::vec3(0.7f, 0.2f, 2.0f),
         glm::vec3(2.3f, -3.3f, -4.0f),
@@ -117,62 +100,50 @@ int main()
         glm::vec3(0.0f, 0.0f, -3.0f)
     };
 
-    constexpr glm::vec3 cubePositions[] = {
-        glm::vec3(0.0f, 0.0f, 0.0f),
-        glm::vec3(2.0f, 5.0f, -15.0f),
-        glm::vec3(-1.5f, -2.2f, -2.5f),
-        glm::vec3(-3.8f, -2.0f, -12.3f),
-        glm::vec3(2.4f, -0.4f, -3.5f),
-        glm::vec3(-1.7f, 3.0f, -7.5f),
-        glm::vec3(1.3f, -2.0f, -2.5f),
-        glm::vec3(1.5f, 2.0f, -2.5f),
-        glm::vec3(1.5f, 0.2f, -1.5f),
-        glm::vec3(-1.3f, 1.0f, -1.5f)
-    };
     std::cerr << "model\n";
     stbi_set_flip_vertically_on_load(true);
 
-    Model testModel{ "Res/low-poly-ice-cream-truck/source/ice_truck/ice_truck/ice.fbx" };
-    Model testModel2{ "Res/classic-mazda-miata-cabriolet-low-poly/versionOne_sketchfab.obj" };
-    const auto [vertices, indices] = LearnOpenGL::Graphics::generateTexturedNormalCube(0.5f);
+    Model::debugLogging = true;
 
-    unsigned int vao;
-    unsigned int vbo;
-    unsigned int ebo;
+    Model testModel{ "Res/backpack/backpack.obj" };
+    Model testModel2{ "Res/textured_car/untitled.obj" };
 
-    glGenVertexArrays(1, &vao);
-    glGenBuffers(1, &vbo);
-    glGenBuffers(1, &ebo);
+    float vertices[] = {
+        10.0f, -0.5f, 10.0f, 0.0f, 1.0f, 0.0f, 10.0f, 0.0f,
+        -10.0f, -0.5f, 10.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+        -10.0f, -0.5f, -10.0f, 0.0f, 1.0f, 0.0f, 0.0f, 10.0f,
 
-    glBindVertexArray(vao);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, static_cast<long long>(sizeof(float) * vertices.size()), vertices.data(), GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<long long>(sizeof(int) * indices.size()), indices.data(), GL_STATIC_DRAW);
+        10.0f, -0.5f, 10.0f, 0.0f, 1.0f, 0.0f, 10.0f, 0.0f,
+        -10.0f, -0.5f, -10.0f, 0.0f, 1.0f, 0.0f, 0.0f, 10.0f,
+        10.0f, -0.5f, -10.0f, 0.0f, 1.0f, 0.0f, 10.0f, 10.0f
+    };
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), nullptr);
+    unsigned int indices[] = {
+        0, 1, 2,
+        3, 4, 5
+    };
+
+    // plane VAO
+    unsigned int planeVao, planeVbo, planeEbo;
+    glGenVertexArrays(1, &planeVao);
+    glGenBuffers(1, &planeVbo);
+    glGenBuffers(1, &planeEbo);
+    glBindVertexArray(planeVao);
+    glBindBuffer(GL_ARRAY_BUFFER, planeVbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, planeEbo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
-    constexpr int normalOffset = 3 * sizeof(float);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<const void*>(normalOffset));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), nullptr);
     glEnableVertexAttribArray(1);
-    constexpr int textureCoordsOffset = 6 * sizeof(float);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<const void*>(textureCoordsOffset));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<const void*>(3 * sizeof(float)));
     glEnableVertexAttribArray(2);
-
-    // light cube vao
-
-    unsigned int lightSourceVao;
-    glGenVertexArrays(1, &lightSourceVao);
-    glBindVertexArray(lightSourceVao);
-
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), nullptr);
-    glEnableVertexAttribArray(0);
-
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<const void*>(6 * sizeof(float)));
     glBindVertexArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    Texture2D floorTexture{ "Res/wood.png", true, true };
+    floorTexture.setTextureWrap(GL_REPEAT, GL_REPEAT);
+    floorTexture.setTextureFilters(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
 
     // game loop except not in the slightest
     shader.use();
@@ -190,7 +161,6 @@ int main()
 
         const glm::mat4 view = camera.calculateView();
         const glm::mat4 projection = camera.calculateProjection();
-        glm::mat4 lightModel(1.0f);
 
         auto diffuseColor = glm::vec3(0.5f * brightness);
         auto ambientColor = glm::vec3(0.1f * brightness);
@@ -205,10 +175,8 @@ int main()
         const float outerCutoff = glm::cos(glm::radians(17.5f));
 
         shader.use();
-        shader.setMat4("model", lightModel);
         shader.setMat4("view", view);
         shader.setMat4("projection", projection);
-
         shader.setFloat("material.shininess", 32.0f);
         shader.setVec3("viewPosition", camera.cameraPos);
 
@@ -227,7 +195,6 @@ int main()
         shader.setVec3("directionalLight.ambient", ambientColor);
         shader.setVec3("directionalLight.diffuse", diffuseColor);
         shader.setVec3("directionalLight.specular", specularColor);
-
         shader.setVec3("spotLight.position", camera.cameraPos);
         shader.setVec3("spotLight.direction", camera.cameraFront);
         shader.setFloat("spotLight.constant", lightConstant);
@@ -249,128 +216,24 @@ int main()
             shader.setVec3("spotLight.specular", Vector3::Zero);
         }
 
-        shader.setFloat("time", static_cast<float>(timer.getCurrentTime()));
+        glBindVertexArray(planeVao);
+        shader.use();
+        floorTexture.use(GL_TEXTURE0);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
-        diffuseMap.use(GL_TEXTURE0);
-        specularMap.use(GL_TEXTURE1);
-        if (enableEmissions)
-        {
-            emissionMap.use(GL_TEXTURE2);
-        }
-        else
-        {
-            Texture2D::stopUsing(GL_TEXTURE2);
-        }
-
-        glBindVertexArray(vao);
-        glDrawElements(GL_TRIANGLES, static_cast<int>(indices.size()), GL_UNSIGNED_INT, nullptr);
-
-        for (unsigned int i = 0; i < 10; i++)
-        {
-            auto model = glm::mat4(1.0f);
-            model = translate(model, cubePositions[i]);
-            const float angle = 20.0f * static_cast<float>(i);
-            model = rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-            shader.setMat4("model", model);
-
-            glDrawElements(GL_TRIANGLES, static_cast<int>(indices.size()), GL_UNSIGNED_INT, nullptr);
-        }
-
-        shader.setMat4("model", rotate(translate(glm::mat4(1.0f), Vector3::Forward * 5.0f), glm::radians(90.0f), Vector3::Left));
+        Transform modelTransform{};
+        shader.setMat4("model", modelTransform.get());
+        testModel.draw(shader);
+        modelTransform.translate(Vector3::Forward * 5.0f);
+        shader.setMat4("model", modelTransform.get());
         testModel2.draw(shader);
-
-        Texture2D::stopUsing(GL_TEXTURE0);
-        Texture2D::stopUsing(GL_TEXTURE1);
-        Texture2D::stopUsing(GL_TEXTURE2);
-
-        shaderNoTexture.use();
-        shaderNoTexture.setMat4("model", rotate(translate(glm::mat4(1.0f), Vector3::Forward * 5.0f), glm::radians(90.0f), Vector3::Left));
-        shaderNoTexture.setMat4("view", view);
-        shaderNoTexture.setMat4("projection", projection);
-
-        shaderNoTexture.setFloat("material.shininess", 32.0f);
-        shaderNoTexture.setVec3("viewPosition", camera.cameraPos);
-
-        for (int i = 0; i < 4; i++)
-        {
-            shaderNoTexture.setVec3("pointLights[" + std::to_string(i) + "].position", pointLightPositions[i]);
-            shaderNoTexture.setVec3("pointLights[" + std::to_string(i) + "].ambient", ambientColor);
-            shaderNoTexture.setVec3("pointLights[" + std::to_string(i) + "].diffuse", diffuseColor);
-            shaderNoTexture.setVec3("pointLights[" + std::to_string(i) + "].specular", specularColor);
-            shaderNoTexture.setFloat("pointLights[" + std::to_string(i) + "].constant", lightConstant);
-            shaderNoTexture.setFloat("pointLights[" + std::to_string(i) + "].linear", lightLinear);
-            shaderNoTexture.setFloat("pointLights[" + std::to_string(i) + "].quadratic", lightQuadratic);
-        }
-
-        shaderNoTexture.setVec3("directionalLight.direction", camera.cameraFront);
-        shaderNoTexture.setVec3("directionalLight.ambient", ambientColor);
-        shaderNoTexture.setVec3("directionalLight.diffuse", diffuseColor);
-        shaderNoTexture.setVec3("directionalLight.specular", specularColor);
-
-        shaderNoTexture.setVec3("spotLight.position", camera.cameraPos);
-        shaderNoTexture.setVec3("spotLight.direction", camera.cameraFront);
-        shaderNoTexture.setFloat("spotLight.constant", lightConstant);
-        shaderNoTexture.setFloat("spotLight.linear", lightLinear);
-        shaderNoTexture.setFloat("spotLight.quadratic", lightQuadratic);
-        shaderNoTexture.setFloat("spotLight.cutoff", cutoff);
-        shaderNoTexture.setFloat("spotLight.outerCutoff", outerCutoff);
-
-        if (enableFlashlight)
-        {
-            shaderNoTexture.setVec3("spotLight.ambient", spotLightAmbientColor);
-            shaderNoTexture.setVec3("spotLight.diffuse", spotLightDiffuseColor);
-            shaderNoTexture.setVec3("spotLight.specular", spotLightSpecularColor);
-        }
-        else
-        {
-            shaderNoTexture.setVec3("spotLight.ambient", Vector3::Zero);
-            shaderNoTexture.setVec3("spotLight.diffuse", Vector3::Zero);
-            shaderNoTexture.setVec3("spotLight.specular", Vector3::Zero);
-        }
-
-        shaderNoTexture.setFloat("time", static_cast<float>(timer.getCurrentTime()));
-
-        testModel.draw(shaderNoTexture);
-
-        // light sources
-
-        lightSourceShader.use();
-        lightSourceShader.setMat4("view", view);
-        lightSourceShader.setMat4("projection", projection);
-        lightSourceShader.setFloat("brightness", brightness);
-
-        // we now draw as many light bulbs as we have point lights.
-        glBindVertexArray(lightSourceVao);
-        for (auto pointLightPosition : pointLightPositions)
-        {
-            lightModel = glm::mat4(1.0f);
-            lightModel = translate(lightModel, pointLightPosition);
-            lightModel = scale(lightModel, glm::vec3(0.2f));
-            lightSourceShader.setMat4("model", lightModel);
-
-            glDrawElements(GL_TRIANGLES, static_cast<int>(indices.size()), GL_UNSIGNED_INT, nullptr);
-        }
-
         glBindVertexArray(0);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
-    // TODO determine better approach to deleting class-based content
-    const GLuint diffuseMapId = diffuseMap.getId();
-    glDeleteTextures(1, &diffuseMapId);
-    const GLuint specularMapId = specularMap.getId();
-    glDeleteTextures(1, &specularMapId);
-    const GLuint emissionMapId = emissionMap.getId();
-    glDeleteTextures(1, &emissionMapId);
     glDeleteProgram(shader.getId());
-    glDeleteProgram(lightSourceShader.getId());
-
-    glDeleteVertexArrays(1, &vao);
-    glDeleteVertexArrays(1, &lightSourceVao);
-    glDeleteBuffers(1, &vbo);
-    glDeleteBuffers(1, &ebo);
 
     glfwTerminate();
 

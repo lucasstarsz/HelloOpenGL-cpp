@@ -556,7 +556,6 @@
         <Content Include="lighting.frag" />
         <Content Include="lightSource.frag" />
         <Content Include="phong.frag" />
-        <Content Include="phong_notexture.frag" />
         <Content Include="Res\container.jpg" />
         <Content Include="Res\container2.png" />
         <Content Include="Res\container2_specular.png" />

@@ -26,10 +26,13 @@ namespace LearnOpenGL::Model
 
     void Model::loadModel(const std::string& path)
     {
-        Assimp::DefaultLogger::create(std::string("load logger for ").append(path).c_str(), Assimp::Logger::VERBOSE);
-        Assimp::LogStream* stderrStream = Assimp::LogStream::createDefaultStream(aiDefaultLogStream_STDERR);
-        Assimp::DefaultLogger::get()->attachStream(
-            stderrStream, Assimp::Logger::NORMAL | Assimp::Logger::DEBUGGING | Assimp::Logger::VERBOSE);
+        if (debugLogging)
+        {
+            Assimp::DefaultLogger::create(std::string("load logger for ").append(path).c_str(), Assimp::Logger::VERBOSE);
+            Assimp::LogStream* stderrStream = Assimp::LogStream::createDefaultStream(aiDefaultLogStream_STDERR);
+            Assimp::DefaultLogger::get()->attachStream(
+                stderrStream, Assimp::Logger::NORMAL | Assimp::Logger::DEBUGGING | Assimp::Logger::VERBOSE);
+        }
 
         Assimp::Importer importer;
         const aiScene* scene = importer.ReadFile(
@@ -44,6 +47,8 @@ namespace LearnOpenGL::Model
 
         _modelDirectory = path.substr(0, path.find_last_of('/'));
         processNode(scene->mRootNode, scene);
+
+        std::cerr << "Successfully imported: '" << path << "'.\n";
         Assimp::DefaultLogger::kill();
     }
 
@@ -64,6 +69,11 @@ namespace LearnOpenGL::Model
 
     Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
     {
+        if (debugLogging)
+        {
+            std::cerr << "Processing " << mesh->mName.C_Str() << "...\n";
+        }
+
         std::vector<Vertex> vertices;
         std::vector<unsigned int> indices;
         std::vector<Texture> textures;
@@ -119,15 +129,21 @@ namespace LearnOpenGL::Model
         aiMaterial* aiMaterial = scene->mMaterials[mesh->mMaterialIndex];
 
         std::vector<Texture> diffuseMaps = loadMaterialTextures(aiMaterial, aiTextureType_DIFFUSE, "diffuse");
-        std::cout << "found " << diffuseMaps.size() << " diffuse maps.\n";
+
+        if (debugLogging)
+        {
+            std::cerr << "found " << diffuseMaps.size() << " diffuse maps.\n";
+        }
+
         textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
 
         std::vector<Texture> specularMaps = loadMaterialTextures(aiMaterial, aiTextureType_SPECULAR, "specular");
-        std::cout << "found " << specularMaps.size() << " specular maps.\n";
-        textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
 
-        std::vector<Texture> ambientMaps = loadMaterialTextures(aiMaterial, aiTextureType_AMBIENT, "ambient");
-        std::cout << "found " << ambientMaps.size() << " ambient maps.\n";
+        if (debugLogging)
+        {
+            std::cerr << "found " << specularMaps.size() << " specular maps.\n";
+        }
+
         textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
 
         Material colorMaterial = loadMaterial(aiMaterial);
@@ -140,24 +156,20 @@ namespace LearnOpenGL::Model
         aiColor3D color(0.f, 0.f, 0.f);
         float shininess;
 
-        aiMaterial->Get(AI_MATKEY_COLOR_AMBIENT, color);
-        const auto ambient = glm::vec3(color.r, color.b, color.g);
-
         aiMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, color);
-        const auto diffuse = glm::vec3(color.r, color.b, color.g);
-
-        aiMaterial->Get(AI_MATKEY_COLOR_EMISSIVE, color);
-        const auto emission = glm::vec3(color.r, color.b, color.g);
+        const auto diffuse = glm::vec3(color.r, color.g, color.b);
 
         aiMaterial->Get(AI_MATKEY_COLOR_SPECULAR, color);
-        const auto specular = glm::vec3(color.r, color.b, color.g);
+        const auto specular = glm::vec3(color.r, color.g, color.b);
 
         aiMaterial->Get(AI_MATKEY_SHININESS, shininess);
 
-        std::cerr << "a: " << to_string(ambient) << ", d: " << to_string(diffuse) << ", e: " << to_string(emission) << ", s: " <<
-            to_string(specular) << '\n';
+        if (debugLogging)
+        {
+            std::cerr << "Diffuse Material: " << to_string(diffuse) << ", Specular Material: " << to_string(specular) << '\n';
+        }
 
-        return { ambient, diffuse, specular, emission, shininess };
+        return { diffuse, specular, shininess };
     }
 
     std::vector<Texture> Model::loadMaterialTextures(const aiMaterial* mat, const aiTextureType type, const std::string& typeName)
