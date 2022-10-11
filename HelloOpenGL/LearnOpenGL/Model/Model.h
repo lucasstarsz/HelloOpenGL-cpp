@@ -7,6 +7,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 
+#include "Material.h"
 #include "Mesh.h"
 #include "../Graphics/Shader.h"
 
@@ -26,6 +27,7 @@ namespace LearnOpenGL::Model
         void loadModel(const std::string& path);
         void processNode(const aiNode* node, const aiScene* scene);
         Mesh processMesh(aiMesh* mesh, const aiScene* scene);
+        static Material loadMaterial(const aiMaterial* aiMaterial);
         std::vector<Texture> loadMaterialTextures(const aiMaterial* mat, aiTextureType type, const std::string& typeName);
     };
 }

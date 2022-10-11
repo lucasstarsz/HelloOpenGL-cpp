@@ -5,6 +5,7 @@
 
 #include <vector>
 
+#include "Material.h"
 #include "Texture.h"
 #include "Vertex.h"
 #include "../Graphics/Shader.h"
@@ -19,8 +20,9 @@ namespace LearnOpenGL::Model
         std::vector<Vertex> vertices;
         std::vector<unsigned int> indices;
         std::vector<Texture> textures;
+        Material material;
 
-        Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
+        Mesh(std::vector<Vertex> vertices, std::vector<unsigned> indices, std::vector<Texture> textures, Material material);
         void draw(const Graphics::Shader& shader) const;
 
     private:

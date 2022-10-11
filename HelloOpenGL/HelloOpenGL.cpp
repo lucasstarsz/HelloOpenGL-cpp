@@ -29,7 +29,7 @@ void mouseCallback(GLFWwindow*, double xPos, double yPos);
 void scrollCallback(GLFWwindow*, double, double yOffset);
 void processInput(GLFWwindow* window);
 
-constexpr float MaxCameraSpeed = 4.0f;
+constexpr float MaxCameraSpeed = 5.0f;
 constexpr float MinCameraSpeed = 2.0f;
 
 Camera camera{ Vector3::Forward * 3.0f };
@@ -94,6 +94,7 @@ int main()
     std::cerr << "shader\n";
 
     const Shader shader("vertex.glsl", "phong.frag");
+    const Shader shaderNoTexture("vertex.glsl", "phong_notexture.frag");
     const Shader lightSourceShader("vertex.glsl", "lightSource.frag");
     std::cerr << "textures\n";
 
@@ -131,7 +132,8 @@ int main()
     std::cerr << "model\n";
     stbi_set_flip_vertically_on_load(true);
 
-    Model backpack{ "Res/backpack/backpack.obj" };
+    Model testModel{ "Res/low-poly-ice-cream-truck/source/ice_truck/ice_truck/ice.fbx" };
+    Model testModel2{ "Res/classic-mazda-miata-cabriolet-low-poly/versionOne_sketchfab.obj" };
     const auto [vertices, indices] = LearnOpenGL::Graphics::generateTexturedNormalCube(0.5f);
 
     unsigned int vao;
@@ -274,7 +276,61 @@ int main()
             glDrawElements(GL_TRIANGLES, static_cast<int>(indices.size()), GL_UNSIGNED_INT, nullptr);
         }
 
-        backpack.draw(shader);
+        shader.setMat4("model", rotate(translate(glm::mat4(1.0f), Vector3::Forward * 5.0f), glm::radians(90.0f), Vector3::Left));
+        testModel2.draw(shader);
+
+        Texture2D::stopUsing(GL_TEXTURE0);
+        Texture2D::stopUsing(GL_TEXTURE1);
+        Texture2D::stopUsing(GL_TEXTURE2);
+
+        shaderNoTexture.use();
+        shaderNoTexture.setMat4("model", rotate(translate(glm::mat4(1.0f), Vector3::Forward * 5.0f), glm::radians(90.0f), Vector3::Left));
+        shaderNoTexture.setMat4("view", view);
+        shaderNoTexture.setMat4("projection", projection);
+
+        shaderNoTexture.setFloat("material.shininess", 32.0f);
+        shaderNoTexture.setVec3("viewPosition", camera.cameraPos);
+
+        for (int i = 0; i < 4; i++)
+        {
+            shaderNoTexture.setVec3("pointLights[" + std::to_string(i) + "].position", pointLightPositions[i]);
+            shaderNoTexture.setVec3("pointLights[" + std::to_string(i) + "].ambient", ambientColor);
+            shaderNoTexture.setVec3("pointLights[" + std::to_string(i) + "].diffuse", diffuseColor);
+            shaderNoTexture.setVec3("pointLights[" + std::to_string(i) + "].specular", specularColor);
+            shaderNoTexture.setFloat("pointLights[" + std::to_string(i) + "].constant", lightConstant);
+            shaderNoTexture.setFloat("pointLights[" + std::to_string(i) + "].linear", lightLinear);
+            shaderNoTexture.setFloat("pointLights[" + std::to_string(i) + "].quadratic", lightQuadratic);
+        }
+
+        shaderNoTexture.setVec3("directionalLight.direction", camera.cameraFront);
+        shaderNoTexture.setVec3("directionalLight.ambient", ambientColor);
+        shaderNoTexture.setVec3("directionalLight.diffuse", diffuseColor);
+        shaderNoTexture.setVec3("directionalLight.specular", specularColor);
+
+        shaderNoTexture.setVec3("spotLight.position", camera.cameraPos);
+        shaderNoTexture.setVec3("spotLight.direction", camera.cameraFront);
+        shaderNoTexture.setFloat("spotLight.constant", lightConstant);
+        shaderNoTexture.setFloat("spotLight.linear", lightLinear);
+        shaderNoTexture.setFloat("spotLight.quadratic", lightQuadratic);
+        shaderNoTexture.setFloat("spotLight.cutoff", cutoff);
+        shaderNoTexture.setFloat("spotLight.outerCutoff", outerCutoff);
+
+        if (enableFlashlight)
+        {
+            shaderNoTexture.setVec3("spotLight.ambient", spotLightAmbientColor);
+            shaderNoTexture.setVec3("spotLight.diffuse", spotLightDiffuseColor);
+            shaderNoTexture.setVec3("spotLight.specular", spotLightSpecularColor);
+        }
+        else
+        {
+            shaderNoTexture.setVec3("spotLight.ambient", Vector3::Zero);
+            shaderNoTexture.setVec3("spotLight.diffuse", Vector3::Zero);
+            shaderNoTexture.setVec3("spotLight.specular", Vector3::Zero);
+        }
+
+        shaderNoTexture.setFloat("time", static_cast<float>(timer.getCurrentTime()));
+
+        testModel.draw(shaderNoTexture);
 
         // light sources
 

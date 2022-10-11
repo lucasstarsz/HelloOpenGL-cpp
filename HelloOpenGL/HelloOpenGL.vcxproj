@@ -25,7 +25,7 @@
         <RootNamespace>HelloOpenGL</RootNamespace>
         <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     </PropertyGroup>
-    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props"/>
+    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
     <PropertyGroup>
         <PreferredToolArchitecture>x64</PreferredToolArchitecture>
     </PropertyGroup>
@@ -55,24 +55,24 @@
         <WholeProgramOptimization>true</WholeProgramOptimization>
         <CharacterSet>Unicode</CharacterSet>
     </PropertyGroup>
-    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props"/>
+    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
     <ImportGroup Label="ExtensionSettings">
     </ImportGroup>
     <ImportGroup Label="Shared">
     </ImportGroup>
     <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-        <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform"/>
+        <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     </ImportGroup>
     <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-        <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform"/>
+        <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     </ImportGroup>
     <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-        <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform"/>
+        <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     </ImportGroup>
     <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-        <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform"/>
+        <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     </ImportGroup>
-    <PropertyGroup Label="UserMacros"/>
+    <PropertyGroup Label="UserMacros" />
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
         <LinkIncremental>true</LinkIncremental>
     </PropertyGroup>
@@ -169,9 +169,9 @@
         </Link>
     </ItemDefinitionGroup>
     <ItemGroup>
-        <ClCompile Include="glad.c"/>
-        <ClCompile Include="HelloOpenGL.cpp"/>
-        <ClCompile Include="LearnOpenGL\Graphics\Camera.cpp"/>
+        <ClCompile Include="glad.c" />
+        <ClCompile Include="HelloOpenGL.cpp" />
+        <ClCompile Include="LearnOpenGL\Graphics\Camera.cpp" />
         <ClCompile Include="LearnOpenGL\Graphics\Image.cpp">
             <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
             <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -246,7 +246,7 @@
             <AdditionalOptions>/Zc:__cplusplus</AdditionalOptions>
             <LinkCompiled>true</LinkCompiled>
         </ClCompile>
-        <ClCompile Include="LearnOpenGL\Graphics\MeshUtils.cpp"/>
+        <ClCompile Include="LearnOpenGL\Graphics\MeshUtils.cpp" />
         <ClCompile Include="LearnOpenGL\Graphics\Shader.cpp">
             <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
             <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -469,11 +469,12 @@
             <AdditionalOptions>/Zc:__cplusplus</AdditionalOptions>
             <LinkCompiled>true</LinkCompiled>
         </ClCompile>
-        <ClCompile Include="LearnOpenGL\Math\Transform.cpp"/>
-        <ClCompile Include="LearnOpenGL\Model\Mesh.cpp"/>
-        <ClCompile Include="LearnOpenGL\Model\Model.cpp"/>
-        <ClCompile Include="LearnOpenGL\Model\Texture.cpp"/>
-        <ClCompile Include="LearnOpenGL\Model\Vertex.cpp"/>
+        <ClCompile Include="LearnOpenGL\Math\Transform.cpp" />
+        <ClCompile Include="LearnOpenGL\Model\Material.cpp" />
+        <ClCompile Include="LearnOpenGL\Model\Mesh.cpp" />
+        <ClCompile Include="LearnOpenGL\Model\Model.cpp" />
+        <ClCompile Include="LearnOpenGL\Model\Texture.cpp" />
+        <ClCompile Include="LearnOpenGL\Model\Vertex.cpp" />
         <ClCompile Include="LearnOpenGL\Utilities\FileUtils.cpp">
             <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
             <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -548,38 +549,47 @@
             <AdditionalOptions>/Zc:__cplusplus</AdditionalOptions>
             <LinkCompiled>true</LinkCompiled>
         </ClCompile>
-        <ClCompile Include="LearnOpenGL\Utilities\Timer.cpp"/>
+        <ClCompile Include="LearnOpenGL\Utilities\Timer.cpp" />
     </ItemGroup>
     <ItemGroup>
-        <Content Include="fragment.glsl"/>
-        <Content Include="lighting.frag"/>
-        <Content Include="lightSource.frag"/>
-        <Content Include="phong.frag"/>
-        <Content Include="Res\container.jpg"/>
-        <Content Include="Res\container2.png"/>
-        <Content Include="Res\container2_specular.png"/>
-        <Content Include="Res\matrix.jpg"/>
-        <Content Include="Res\wall.jpg"/>
-        <Content Include="vertex.glsl"/>
-        <Content Include="yellowfrag.glsl"/>
+        <Content Include="fragment.glsl" />
+        <Content Include="lighting.frag" />
+        <Content Include="lightSource.frag" />
+        <Content Include="phong.frag" />
+        <Content Include="phong_notexture.frag" />
+        <Content Include="Res\container.jpg" />
+        <Content Include="Res\container2.png" />
+        <Content Include="Res\container2_specular.png" />
+        <Content Include="Res\low-poly-ice-cream-truck\source\ice_truck\ice_truck\ice.fbx" />
+        <Content Include="Res\low-poly-ice-cream-truck\source\ice_truck\ice_truck\icet_ao.png" />
+        <Content Include="Res\low-poly-ice-cream-truck\source\ice_truck\ice_truck\icet_diff.png" />
+        <Content Include="Res\low-poly-ice-cream-truck\source\ice_truck\ice_truck\icet_rough.png" />
+        <Content Include="Res\low-poly-ice-cream-truck\textures\icet_ao.png" />
+        <Content Include="Res\low-poly-ice-cream-truck\textures\icet_diff.png" />
+        <Content Include="Res\low-poly-ice-cream-truck\textures\icet_rough.png" />
+        <Content Include="Res\matrix.jpg" />
+        <Content Include="Res\wall.jpg" />
+        <Content Include="vertex.glsl" />
+        <Content Include="yellowfrag.glsl" />
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="LearnOpenGL\Graphics\Camera.h"/>
-        <ClInclude Include="LearnOpenGL\Graphics\Image.h"/>
-        <ClInclude Include="LearnOpenGL\Graphics\MeshUtils.h"/>
-        <ClInclude Include="LearnOpenGL\Graphics\Shader.h"/>
-        <ClInclude Include="LearnOpenGL\Graphics\ShaderUtils.h"/>
-        <ClInclude Include="LearnOpenGL\Graphics\Texture2D.h"/>
-        <ClInclude Include="LearnOpenGL\Math\Transform.h"/>
-        <ClInclude Include="LearnOpenGL\Math\Vector3.h"/>
-        <ClInclude Include="LearnOpenGL\Model\Mesh.h"/>
-        <ClInclude Include="LearnOpenGL\Model\Model.h"/>
-        <ClInclude Include="LearnOpenGL\Model\Texture.h"/>
-        <ClInclude Include="LearnOpenGL\Model\Vertex.h"/>
-        <ClInclude Include="LearnOpenGL\Utilities\FileUtils.h"/>
-        <ClInclude Include="LearnOpenGL\Utilities\Timer.h"/>
+        <ClInclude Include="LearnOpenGL\Graphics\Camera.h" />
+        <ClInclude Include="LearnOpenGL\Graphics\Image.h" />
+        <ClInclude Include="LearnOpenGL\Graphics\MeshUtils.h" />
+        <ClInclude Include="LearnOpenGL\Graphics\Shader.h" />
+        <ClInclude Include="LearnOpenGL\Graphics\ShaderUtils.h" />
+        <ClInclude Include="LearnOpenGL\Graphics\Texture2D.h" />
+        <ClInclude Include="LearnOpenGL\Math\Transform.h" />
+        <ClInclude Include="LearnOpenGL\Math\Vector3.h" />
+        <ClInclude Include="LearnOpenGL\Model\Material.h" />
+        <ClInclude Include="LearnOpenGL\Model\Mesh.h" />
+        <ClInclude Include="LearnOpenGL\Model\Model.h" />
+        <ClInclude Include="LearnOpenGL\Model\Texture.h" />
+        <ClInclude Include="LearnOpenGL\Model\Vertex.h" />
+        <ClInclude Include="LearnOpenGL\Utilities\FileUtils.h" />
+        <ClInclude Include="LearnOpenGL\Utilities\Timer.h" />
     </ItemGroup>
-    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets"/>
+    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
     <ImportGroup Label="ExtensionTargets">
     </ImportGroup>
 </Project>

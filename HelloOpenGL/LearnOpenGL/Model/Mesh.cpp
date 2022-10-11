@@ -7,38 +7,28 @@
 
 namespace LearnOpenGL::Model
 {
-    Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned> indices, std::vector<Texture> textures)
-        : vertices(std::move(vertices)), indices(std::move(indices)), textures(std::move(textures))
+    Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned> indices, std::vector<Texture> textures, Material material)
+        : vertices(std::move(vertices)), indices(std::move(indices)), textures(std::move(textures)), material(material)
     {
         setupMesh();
     }
 
     void Mesh::draw(const Graphics::Shader& shader) const
     {
-        unsigned int diffuseNumber = 1;
-        unsigned int specularNumber = 1;
-
         for (int i = 0; i < static_cast<int>(textures.size()); i++)
         {
             glActiveTexture(GL_TEXTURE0 + i);
-
-            std::string number;
             std::string name = textures[i].type;
-
-            if (name == "diffuse")
-            {
-                number = std::to_string(diffuseNumber);
-                diffuseNumber++;
-            }
-            else if (name == "specular")
-            {
-                number = std::to_string(specularNumber);
-                specularNumber++;
-            }
 
             shader.setInt(std::string("material.").append(name), i);
             glBindTexture(GL_TEXTURE_2D, textures[i].id);
         }
+
+        shader.setVec3("material.ambient", material.ambient);
+        shader.setVec3("material.diffuse", material.diffuse);
+        shader.setVec3("material.emission", material.emission);
+        shader.setVec3("material.specular", material.specular);
+        shader.setFloat("material.shininess", material.shininess);
 
         glActiveTexture(GL_TEXTURE0);
 

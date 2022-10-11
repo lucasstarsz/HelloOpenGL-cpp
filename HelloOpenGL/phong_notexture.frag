@@ -2,10 +2,10 @@
 
 struct Material
 {
-    sampler2D ambient;
-    sampler2D diffuse;
-    sampler2D specular;
-    sampler2D emission;
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+    vec3 emission;
     float shininess;
 };
 
@@ -92,11 +92,11 @@ vec3 calculateDirectionalLight(DirectionalLight directionalLight, vec3 normalize
     float diffuseImpact = max(dot(normalizedNormal, lightDirection), 0.0f);
 
     vec3 reflectDirection = reflect(-lightDirection, normalizedNormal);
-    float specularImpact = pow(max(dot(viewDirection, reflectDirection), 0.0f), material.shininess);
+    float specularImpact = pow(max(dot(viewDirection, reflectDirection), 0.0f), material.shininess + 1.0f);
 
-    vec3 ambient = directionalLight.ambient * texture(material.ambient, textureCoordinates).rgb;
-    vec3 diffuse = diffuseImpact * directionalLight.diffuse * texture(material.diffuse, textureCoordinates).rgb;
-    vec3 specular = specularImpact * directionalLight.specular * texture(material.specular, textureCoordinates).rgb;
+    vec3 ambient = directionalLight.ambient * material.ambient;
+    vec3 diffuse = diffuseImpact * directionalLight.diffuse * material.diffuse;
+    vec3 specular = specularImpact * directionalLight.specular * material.specular;
 
     return ambient + diffuse + specular;
 }
@@ -116,9 +116,9 @@ vec3 calculateSpotLight(SpotLight spotLight, vec3 normal, vec3 fragmentPosition,
     float epsilon = spotLight.cutoff - spotLight.outerCutoff;
     float intensity = clamp((theta - spotLight.outerCutoff) / epsilon, 0.0f, 1.0f);
 
-    vec3 ambient = spotLight.ambient * texture(material.ambient, textureCoordinates).rgb;
-    vec3 diffuse = (attenuation * intensity * diffuseImpact) * spotLight.diffuse * texture(material.diffuse, textureCoordinates).rgb;
-    vec3 specular = (attenuation * intensity * specularImpact) * spotLight.specular * texture(material.specular, textureCoordinates).rgb;
+    vec3 ambient = spotLight.ambient * material.ambient;
+    vec3 diffuse = (attenuation * intensity * diffuseImpact) * spotLight.diffuse * material.diffuse;
+    vec3 specular = (attenuation * intensity * specularImpact) * spotLight.specular * material.specular;
 
     return ambient + diffuse + specular;
 }
@@ -134,9 +134,9 @@ vec3 calculatePointLight(PointLight pointLight, vec3 normalizedNormal, vec3 frag
     float lightDistance = length(pointLight.position - fragmentPosition);
     float attenuation = 1.0f / (pointLight.constant + (pointLight.linear * lightDistance) + pointLight.quadratic * (lightDistance * lightDistance));
 
-    vec3 ambient = pointLight.ambient * texture(material.ambient, textureCoordinates).rgb;
-    vec3 diffuse = (attenuation * diffuseImpact) * pointLight.diffuse * texture(material.diffuse, textureCoordinates).rgb;
-    vec3 specular = (attenuation * specularImpact) * pointLight.specular * texture(material.specular, textureCoordinates).rgb;
+    vec3 ambient = pointLight.ambient * material.ambient;
+    vec3 diffuse = (attenuation * diffuseImpact) * pointLight.diffuse * material.diffuse;
+    vec3 specular = (attenuation * specularImpact) * pointLight.specular * material.specular;
 
     return ambient + diffuse + specular;
 }
@@ -144,8 +144,8 @@ vec3 calculatePointLight(PointLight pointLight, vec3 normalizedNormal, vec3 frag
 vec3 calculateEmission()
 {
     // map will only apply emission for completely black parts of specular lighting.
-    vec3 invertedBlackSpecularMap = floor(1.0f - texture(material.specular, textureCoordinates).rgb);
-    vec3 emission = invertedBlackSpecularMap * texture(material.emission, textureCoordinates + vec2(0.0f, time)).rgb;
+    vec3 invertedBlackSpecularMap = floor(1.0f - material.specular);
+    vec3 emission = invertedBlackSpecularMap * material.emission;
 
     return emission;
 }
