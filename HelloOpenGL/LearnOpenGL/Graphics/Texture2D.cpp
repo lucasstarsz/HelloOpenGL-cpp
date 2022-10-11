@@ -26,33 +26,27 @@ namespace LearnOpenGL::Graphics
 
         if (imageData)
         {
-            GLint format;
+            GLint internalFormat;
+            GLint dataFormat;
             if (numberChannels == 3)
             {
-                format = GL_RGB;
-
-                if (useSRGB)
-                {
-                    format = GL_SRGB;
-                }
+                dataFormat = GL_RGB;
+                internalFormat = useSRGB ? GL_SRGB : GL_RGB;
             }
             else if (numberChannels == 4)
             {
-                format = GL_RGBA;
-
-                if (useSRGB)
-                {
-                    format = GL_SRGB_ALPHA;
-                }
+                dataFormat = GL_RGBA;
+                internalFormat = useSRGB ? GL_SRGB_ALPHA : GL_RGBA;
             }
             else
             {
-                format = GL_RED;
+                dataFormat = GL_RED;
+                internalFormat = GL_RED;
             }
 
             bind();
 
-            glTexImage2D(GL_TEXTURE_2D, 0, format, imageWidth, imageHeight, 0, format, GL_UNSIGNED_BYTE, imageData);
+            glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, imageWidth, imageHeight, 0, dataFormat, GL_UNSIGNED_BYTE, imageData);
 
             if (useMipmaps)
             {

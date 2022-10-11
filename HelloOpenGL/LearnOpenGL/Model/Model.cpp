@@ -166,7 +166,8 @@ namespace LearnOpenGL::Model
 
         if (debugLogging)
         {
-            std::cerr << "Diffuse Material: " << to_string(diffuse) << ", Specular Material: " << to_string(specular) << '\n';
+            std::cerr << "Diffuse Material: " << to_string(diffuse) << ", Specular Material: " << to_string(specular) << ", Shininess: " <<
+                shininess << '\n';
         }
 
         return { diffuse, specular, shininess };

@@ -141,6 +141,27 @@ int main()
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<const void*>(6 * sizeof(float)));
     glBindVertexArray(0);
 
+    unsigned int depthMapFbo;
+    glGenFramebuffers(1, &depthMapFbo);
+
+    constexpr unsigned int shadowWidth = 1024;
+    constexpr unsigned int shadowHeight = 1024;
+
+    unsigned int depthMap;
+    glGenTextures(1, &depthMap);
+    glBindTexture(GL_TEXTURE_2D, depthMap);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, shadowWidth, shadowHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, depthMapFbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+    glDrawBuffer(GL_NONE);
+    glReadBuffer(GL_NONE);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
     Texture2D floorTexture{ "Res/wood.png", true, true };
     floorTexture.setTextureWrap(GL_REPEAT, GL_REPEAT);
     floorTexture.setTextureFilters(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
@@ -165,12 +186,9 @@ int main()
         auto diffuseColor = glm::vec3(0.5f * brightness);
         auto ambientColor = glm::vec3(0.1f * brightness);
         auto specularColor = glm::vec3(0.5f * brightness);
-        auto spotLightDiffuseColor = glm::vec3(0.75f);
+        auto spotLightDiffuseColor = glm::vec3(1.25f, 1.0f, 1.0f);
         auto spotLightAmbientColor = glm::vec3(0.0f);
-        auto spotLightSpecularColor = glm::vec3(0.75f);
-        constexpr float lightConstant = 1.0f;
-        constexpr float lightLinear = 0.09f;
-        constexpr float lightQuadratic = 0.032f;
+        auto spotLightSpecularColor = glm::vec3(1.0f);
         const float cutoff = glm::cos(glm::radians(12.5f));
         const float outerCutoff = glm::cos(glm::radians(17.5f));
 
@@ -186,20 +204,14 @@ int main()
             shader.setVec3("pointLights[" + std::to_string(i) + "].ambient", ambientColor);
             shader.setVec3("pointLights[" + std::to_string(i) + "].diffuse", diffuseColor);
             shader.setVec3("pointLights[" + std::to_string(i) + "].specular", specularColor);
-            shader.setFloat("pointLights[" + std::to_string(i) + "].constant", lightConstant);
-            shader.setFloat("pointLights[" + std::to_string(i) + "].linear", lightLinear);
-            shader.setFloat("pointLights[" + std::to_string(i) + "].quadratic", lightQuadratic);
         }
 
-        shader.setVec3("directionalLight.direction", camera.cameraFront);
+        shader.setVec3("directionalLight.direction", Vector3::Down + Vector3::Forward);
         shader.setVec3("directionalLight.ambient", ambientColor);
         shader.setVec3("directionalLight.diffuse", diffuseColor);
         shader.setVec3("directionalLight.specular", specularColor);
-        shader.setVec3("spotLight.position", camera.cameraPos);
-        shader.setVec3("spotLight.direction", camera.cameraFront);
-        shader.setFloat("spotLight.constant", lightConstant);
-        shader.setFloat("spotLight.linear", lightLinear);
-        shader.setFloat("spotLight.quadratic", lightQuadratic);
+        shader.setVec3("spotLight.position", Vector3::Up * 10.0f + Vector3::Back * 10.0f);
+        shader.setVec3("spotLight.direction", Vector3::Down + Vector3::Forward);
         shader.setFloat("spotLight.cutoff", cutoff);
         shader.setFloat("spotLight.outerCutoff", outerCutoff);
 
