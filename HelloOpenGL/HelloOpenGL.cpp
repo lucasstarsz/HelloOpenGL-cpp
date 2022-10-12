@@ -27,7 +27,7 @@ typedef LearnOpenGL::Model::Model Model;
 namespace Vector3 = LearnOpenGL::Math::Vector3;
 
 void frameBufferSizeCallback(GLFWwindow*, int width, int height);
-void mouseCallback(GLFWwindow*, double xPos, double yPos);
+void mouseCallback(GLFWwindow* window, double xPos, double yPos);
 void scrollCallback(GLFWwindow*, double, double yOffset);
 void processInput(GLFWwindow* window);
 
@@ -42,12 +42,13 @@ float lastMouseY = 300.0f;
 
 bool firstMouse = true;
 
-glm::vec3 lightPosition(1.2f, 1.0f, 2.0f);
+bool enableSpotLight = false;
+glm::vec3 spotLightPosition{ Vector3::Up * 5.0f };
+glm::vec3 spotLightDirection{ Vector3::Down };
+float spotLightAngle = 0.0f;
+float spotLightBrightness = 0.75f;
 
-float brightness = 0.5f;
-bool enableEmissions = false;
-bool enableFlashlight = false;
-bool mFirstPressed = false;
+float environmentBrightness = 0.5f;
 bool fFirstPressed = false;
 
 void render(Shader& shader, unsigned int planeVao, Texture2D& floorTexture, Model& testModel, Model& testModel2);
@@ -74,7 +75,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-    GLFWwindow* window = glfwCreateWindow(800, 600, "LearnOpenGL", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(1280, 720, "LearnOpenGL", nullptr, nullptr);
 
     if (!window)
     {
@@ -86,11 +87,6 @@ int main()
     std::cerr << "hi\n";
 
     glfwMakeContextCurrent(window);
-    glfwSetFramebufferSizeCallback(window, &frameBufferSizeCallback);
-    // glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    glfwSetCursorPosCallback(window, mouseCallback);
-    glfwSetScrollCallback(window, scrollCallback);
-    glfwSwapInterval(1);
 
     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
     {
@@ -99,6 +95,11 @@ int main()
     }
     std::cerr << "glad to be here\n";
 
+    glfwSetFramebufferSizeCallback(window, &frameBufferSizeCallback);
+    glfwSetCursorPosCallback(window, mouseCallback);
+    glfwSetScrollCallback(window, scrollCallback);
+    glfwSwapInterval(1);
+
     glEnable(GL_DEPTH_TEST);
 
     // imgui setup
@@ -106,18 +107,11 @@ int main()
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
-    (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad; // Enable Gamepad Controls
-
+    io.ConfigWindowsMoveFromTitleBarOnly = true;
     ImGui::StyleColorsDark();
 
-    bool showDemoWindow = true;
-    bool showAnotherWindow = false;
-    auto clearColor = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init();
-    ImGui_ImplGlfw_InitForOpenGL(window, false);
 
     // rendering setup
     std::cerr << "shader\n";
@@ -170,15 +164,12 @@ int main()
     floorTexture.setTextureFilters(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
 
     // game loop except not in the slightest
-    shader.use();
-    shader.setInt("material.diffuse", 0);
-    shader.setInt("material.specular", 1);
-    shader.setInt("material.emission", 2);
+    ImVec4 clearColor{ 0.1f, 0.1f, 0.1f, 1.0f };
 
     while (!glfwWindowShouldClose(window))
     {
         timer.evaluateDeltaTime();
-        processInput(window);
+
         glfwPollEvents();
 
         // Start the Dear ImGui frame
@@ -186,61 +177,66 @@ int main()
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-        if (showDemoWindow) ImGui::ShowDemoWindow(&showDemoWindow);
+        processInput(window);
 
-        // 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
+        int windowWidth;
+        int windowHeight;
+        glfwGetWindowSize(window, &windowWidth, &windowHeight);
+
+        ImGui::SetNextWindowPos(ImVec2{ 0.0f, 0.0f });
+        ImGui::SetNextWindowSize(ImVec2{ 500.0f, static_cast<float>(windowHeight) });
+
         {
-            static float f = 0.0f;
-            static int counter = 0;
+            ImGui::Begin("how does this qualify as a game engine");
 
-            ImGui::Begin("Hello, world!"); // Create a window called "Hello, world!" and append into it.
+            int mouseInputMode = glfwGetInputMode(window, GLFW_CURSOR);
+            ImGui::Text("Mouse hovering on GUI: %s", mouseInputMode && io.WantCaptureMouse ? "True" : "False");
+            ImGui::Text("Mouse Pointer: %s", mouseInputMode == GLFW_CURSOR_NORMAL ? "Normal" : "Disabled");
 
-            ImGui::Text("This is some useful text."); // Display some text (you can use a format strings too)
-            ImGui::Checkbox("Demo Window", &showDemoWindow); // Edit bools storing our window open/close state
-            ImGui::Checkbox("Another Window", &showAnotherWindow);
+            ImGui::Text("Mouse Position: (%.2f, %.2f)", static_cast<double>(io.MousePos.x), static_cast<double>(io.MousePos.y));
+            ImGui::Text("Camera Position: (%.1f, %.1f, %.1f)", camera.cameraPos.x, camera.cameraPos.y, camera.cameraPos.z);
+            ImGui::Text("Camera Facing: (%.1f, %.1f, %.1f)", camera.cameraFront.x, camera.cameraFront.y, camera.cameraFront.z);
 
-            ImGui::SliderFloat("float", &f, 0.0f, 1.0f); // Edit 1 float using a slider from 0.0f to 1.0f
-            ImGui::ColorEdit3("clear color", reinterpret_cast<float*>(&clearColor)); // Edit 3 floats representing a color
+            ImGui::ColorEdit3("Background Color", reinterpret_cast<float*>(&clearColor));
 
-            if (ImGui::Button("Button")) // Buttons return true when clicked (most widgets return true when edited/activated)
-                counter++;
-            ImGui::SameLine();
-            ImGui::Text("counter = %d", counter);
+            if (ImGui::Button("Reset Player Position"))
+            {
+                camera.cameraPos = Vector3::Forward * 3.0f;
+                camera.cameraFront = Vector3::Back;
+                camera.cameraUp = Vector3::Up;
+            }
 
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+            ImGui::Checkbox("Toggle Point Light (or press F)", &enableSpotLight);
+            ImGui::SliderFloat("Environment Brightness", &environmentBrightness, 0.0f, 1.0f);
+            ImGui::SliderFloat3("Spotlight Position", value_ptr(spotLightPosition), -10.0f, 10.0f);
+            ImGui::SliderFloat("Spotlight Angle", &spotLightAngle, -1.0f, 1.0f);
+            ImGui::SliderFloat("Spotlight Brightness", &spotLightBrightness, 0.0f, 1.0f);
+
+            ImGui::Text("Render Time: %.3f ms/frame (%.1f FPS)", static_cast<double>(1000.0f / ImGui::GetIO().Framerate),
+                        static_cast<double>(ImGui::GetIO().Framerate));
+
             ImGui::End();
         }
 
-        // 3. Show another simple window.
-        if (showAnotherWindow)
-        {
-            ImGui::Begin("Another Window", &showAnotherWindow);
-            // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-            ImGui::Text("Hello from another window!");
-            if (ImGui::Button("Close Me")) showAnotherWindow = false;
-            ImGui::End();
-        }
+        ImVec2 vMin = ImGui::GetWindowContentRegionMin();
+        ImVec2 vMax = ImGui::GetWindowContentRegionMax();
 
-        int displayW;
-        int displayH;
-        glfwGetFramebufferSize(window, &displayW, &displayH);
-        glViewport(0, 0, displayW, displayH);
-        glClearColor(clearColor.x * clearColor.w, clearColor.y * clearColor.w, clearColor.z * clearColor.w, clearColor.w);
-        glClear(GL_COLOR_BUFFER_BIT);
+        ImVec2 windowSize{ vMax.x - vMin.x, vMax.y - vMin.y };
 
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glViewport(static_cast<int>(windowSize.x), 0, windowWidth - static_cast<int>(windowSize.x), windowHeight);
+
+        glClearColor(clearColor.x, clearColor.y, clearColor.z, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         const glm::mat4 view = camera.calculateView();
         const glm::mat4 projection = camera.calculateProjection();
 
-        auto diffuseColor = glm::vec3(0.5f * brightness);
-        auto ambientColor = glm::vec3(0.1f * brightness);
-        auto specularColor = glm::vec3(0.5f * brightness);
-        auto spotLightDiffuseColor = glm::vec3(1.25f, 1.0f, 1.0f);
-        auto spotLightAmbientColor = glm::vec3(0.0f);
-        auto spotLightSpecularColor = glm::vec3(1.0f);
+        auto diffuseColor = glm::vec3(0.5f * environmentBrightness);
+        auto ambientColor = glm::vec3(0.1f * environmentBrightness);
+        auto specularColor = glm::vec3(0.5f * environmentBrightness);
+        auto spotLightDiffuseColor = glm::vec3(1.25f, 1.0f, 1.0f) * spotLightBrightness;
+        auto spotLightAmbientColor = glm::vec3(0.0f) * spotLightBrightness;
+        auto spotLightSpecularColor = glm::vec3(1.0f) * spotLightBrightness;
         const float cutoff = glm::cos(glm::radians(12.5f));
         const float outerCutoff = glm::cos(glm::radians(17.5f));
 
@@ -262,12 +258,12 @@ int main()
         shader.setVec3("directionalLight.ambient", ambientColor);
         shader.setVec3("directionalLight.diffuse", diffuseColor);
         shader.setVec3("directionalLight.specular", specularColor);
-        shader.setVec3("spotLight.position", Vector3::Up * 10.0f + Vector3::Back * 10.0f);
-        shader.setVec3("spotLight.direction", Vector3::Down + Vector3::Forward);
+        shader.setVec3("spotLight.position", spotLightPosition);
+        shader.setVec3("spotLight.direction", spotLightDirection + (Vector3::Forward * spotLightAngle));
         shader.setFloat("spotLight.cutoff", cutoff);
         shader.setFloat("spotLight.outerCutoff", outerCutoff);
 
-        if (enableFlashlight)
+        if (enableSpotLight)
         {
             shader.setVec3("spotLight.ambient", spotLightAmbientColor);
             shader.setVec3("spotLight.diffuse", spotLightDiffuseColor);
@@ -288,6 +284,7 @@ int main()
         Transform modelTransform{};
         shader.setMat4("model", modelTransform.get());
         testModel.draw(shader);
+
         modelTransform.translate(Vector3::Forward * 5.0f);
         shader.setMat4("model", modelTransform.get());
         testModel2.draw(shader);
@@ -316,8 +313,19 @@ void frameBufferSizeCallback(GLFWwindow*, const int width, const int height)
     glViewport(0, 0, width, height);
 }
 
-void mouseCallback(GLFWwindow*, const double xPos, const double yPos)
+bool firstPressed = false;
+bool mouseEnabled = true;
+
+void mouseCallback(GLFWwindow* window, const double xPos, const double yPos)
 {
+    const ImGuiIO& io = ImGui::GetIO();
+
+    if ((io.WantCaptureMouse && glfwGetInputMode(window, GLFW_CURSOR) != GLFW_CURSOR_DISABLED) || glfwGetInputMode(window, GLFW_CURSOR) ==
+        GLFW_CURSOR_NORMAL)
+    {
+        return;
+    }
+
     if (firstMouse)
     {
         lastMouseX = static_cast<float>(xPos);
@@ -342,9 +350,39 @@ void mouseCallback(GLFWwindow*, const double xPos, const double yPos)
 
 void processInput(GLFWwindow* window)
 {
+    const ImGuiIO& io = ImGui::GetIO();
+
+    if ((io.WantCaptureKeyboard || io.WantCaptureMouse) && glfwGetInputMode(window, GLFW_CURSOR) != GLFW_CURSOR_DISABLED)
+    {
+        return;
+    }
+
+    if (!firstPressed && glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+    {
+        mouseEnabled = !mouseEnabled;
+        firstPressed = true;
+
+        glfwSetInputMode(window, GLFW_CURSOR, mouseEnabled ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
+
+        if (!mouseEnabled)
+        {
+            firstMouse = true;
+        }
+    }
+    else if (firstPressed && glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
+    {
+        firstPressed = false;
+    }
+
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     {
-        glfwSetWindowShouldClose(window, true);
+        mouseEnabled = true;
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    }
+
+    if (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_NORMAL)
+    {
+        return;
     }
 
     float cameraSpeed = MinCameraSpeed;
@@ -388,28 +426,18 @@ void processInput(GLFWwindow* window)
 
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
     {
-        brightness = glm::clamp(brightness + 0.01f, 0.0f, 1.0f);
+        environmentBrightness = glm::clamp(environmentBrightness + 0.01f, 0.0f, 1.0f);
     }
 
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
     {
-        brightness = glm::clamp(brightness - 0.01f, 0.0f, 1.0f);
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS && !mFirstPressed)
-    {
-        mFirstPressed = true;
-        enableEmissions = !enableEmissions;
-    }
-    else if (glfwGetKey(window, GLFW_KEY_M) == GLFW_RELEASE && mFirstPressed)
-    {
-        mFirstPressed = false;
+        environmentBrightness = glm::clamp(environmentBrightness - 0.01f, 0.0f, 1.0f);
     }
 
     if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS && !fFirstPressed)
     {
         fFirstPressed = true;
-        enableFlashlight = !enableFlashlight;
+        enableSpotLight = !enableSpotLight;
     }
     else if (glfwGetKey(window, GLFW_KEY_F) == GLFW_RELEASE && fFirstPressed)
     {
@@ -419,5 +447,12 @@ void processInput(GLFWwindow* window)
 
 void scrollCallback(GLFWwindow*, double, const double yOffset)
 {
+    const ImGuiIO& io = ImGui::GetIO();
+
+    if (io.WantCaptureMouse)
+    {
+        return;
+    }
+
     camera.setFov(camera.getFov() - static_cast<float>(yOffset));
 }
