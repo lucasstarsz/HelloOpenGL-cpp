@@ -41,6 +41,7 @@ float lastMouseX = 400.0f;
 float lastMouseY = 300.0f;
 
 bool firstMouse = true;
+bool hoveredOverScene = false;
 
 bool enableSpotLight = false;
 glm::vec3 spotLightPosition{ Vector3::Up * 5.0f };
@@ -169,6 +170,54 @@ int main()
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<const void*>(6 * sizeof(float)));
     glBindVertexArray(0);
 
+    // FBO
+    unsigned int fbo;
+    glGenFramebuffers(1, &fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    unsigned int fboTexture;
+    glGenTextures(1, &fboTexture);
+    glBindTexture(GL_TEXTURE_2D, fboTexture);
+
+    int ww;
+    int wh;
+    glfwGetWindowSize(window, &ww, &wh);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, ww, wh, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fboTexture, 0);
+
+    unsigned int framebuffer;
+    glGenFramebuffers(1, &framebuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+    // generate texture
+    unsigned int textureColorBuffer;
+    glGenTextures(1, &textureColorBuffer);
+    glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, ww, wh, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorBuffer, 0);
+
+    unsigned int rbo;
+    glGenRenderbuffers(1, &rbo);
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, ww, wh);
+
+    // use a single renderbuffer object for both a depth AND stencil buffer.
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo); // now actually attach it
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    {
+        // execute non-victory dance
+        std::cerr << "Victory was not achieved.\n";
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+
     Texture2D floorTexture{ "Res/wood.png", true, true };
     floorTexture.setTextureWrap(GL_REPEAT, GL_REPEAT);
     floorTexture.setTextureFilters(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
@@ -176,69 +225,36 @@ int main()
     // game loop except not in the slightest
     ImVec4 clearColor{ 0.1f, 0.1f, 0.1f, 1.0f };
 
+    ImVec2 sceneWindowSize{ 1280.0f, 720.0f };
+
     while (!glfwWindowShouldClose(window))
     {
         timer.evaluateDeltaTime();
 
         glfwPollEvents();
 
+        processInput(window);
+
+        glClearColor(clearColor.x, clearColor.y, clearColor.z, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glEnable(GL_DEPTH_TEST);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+        glClearColor(clearColor.x, clearColor.y, clearColor.z, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glEnable(GL_DEPTH_TEST);
+
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        processInput(window);
-
         int windowWidth;
         int windowHeight;
         glfwGetWindowSize(window, &windowWidth, &windowHeight);
 
-        // ImGui::SetNextWindowPos(ImVec2{ 0.0f, 0.0f });
-        // ImGui::SetNextWindowSize(ImVec2{ 500.0f, static_cast<float>(windowHeight) });
-
-        {
-            ImGui::Begin("how does this even begin to qualify as a game engine");
-
-            int mouseInputMode = glfwGetInputMode(window, GLFW_CURSOR);
-            ImGui::Text("Mouse hovering on GUI: %s", mouseInputMode && io.WantCaptureMouse ? "True" : "False");
-            ImGui::Text("Mouse Pointer: %s", mouseInputMode == GLFW_CURSOR_NORMAL ? "Normal" : "Disabled");
-
-            ImGui::Text("Mouse Position: (%.2f, %.2f)", static_cast<double>(io.MousePos.x), static_cast<double>(io.MousePos.y));
-            ImGui::Text("Camera Position: (%.1f, %.1f, %.1f)", camera.cameraPos.x, camera.cameraPos.y, camera.cameraPos.z);
-            ImGui::Text("Camera Facing: (%.1f, %.1f, %.1f)", camera.cameraFront.x, camera.cameraFront.y, camera.cameraFront.z);
-
-            ImGui::ColorEdit3("Background Color", reinterpret_cast<float*>(&clearColor));
-
-            if (ImGui::Button("Reset Player Position"))
-            {
-                camera.cameraPos = Vector3::Forward * 3.0f;
-                camera.cameraFront = Vector3::Back;
-                camera.cameraUp = Vector3::Up;
-            }
-
-            ImGui::Checkbox("Toggle Point Light (or press F)", &enableSpotLight);
-            ImGui::SliderFloat("Environment Brightness", &environmentBrightness, 0.0f, 1.0f);
-            ImGui::SliderFloat3("Spotlight Position", value_ptr(spotLightPosition), -10.0f, 10.0f);
-            ImGui::SliderFloat("Spotlight Angle", &spotLightAngle, -1.0f, 1.0f);
-            ImGui::SameLine();
-            ImGui::InputFloat("(Edit angle)", &spotLightAngle);
-            ImGui::SliderFloat("Spotlight Brightness", &spotLightBrightness, 0.0f, 1.0f);
-
-            ImGui::Text("Render Time: %.3f ms/frame (%.1f FPS)", static_cast<double>(1000.0f / ImGui::GetIO().Framerate),
-                        static_cast<double>(ImGui::GetIO().Framerate));
-
-            ImGui::End();
-        }
-
-        ImVec2 vMin = ImGui::GetWindowContentRegionMin();
-        ImVec2 vMax = ImGui::GetWindowContentRegionMax();
-
-        ImVec2 windowSize{ vMax.x - vMin.x, vMax.y - vMin.y };
-
-        glViewport(static_cast<int>(windowSize.x), 0, windowWidth - static_cast<int>(windowSize.x), windowHeight);
-
-        glClearColor(clearColor.x, clearColor.y, clearColor.z, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glViewport(0, 0, sceneWindowSize.x, sceneWindowSize.y);
 
         const glm::mat4 view = camera.calculateView();
         const glm::mat4 projection = camera.calculateProjection();
@@ -302,9 +318,67 @@ int main()
         testModel2.draw(shader);
         glBindVertexArray(0);
 
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        ImGui::SetNextWindowPos(ImVec2{ 0.0f, 0.0f }, ImGuiCond_Once);
+        ImGui::SetNextWindowSize(ImVec2{ static_cast<float>(windowWidth), static_cast<float>(windowHeight) }, ImGuiCond_Once);
+        ImGui::Begin("how does this even begin to qualify as a game engine");
+        {
+            ImGui::BeginChild("Engine Content");
+
+            ImGui::Begin("\"Inspector\"");
+            {
+                int mouseInputMode = glfwGetInputMode(window, GLFW_CURSOR);
+
+                ImGui::Text("Mouse hovering on GUI: %s", mouseInputMode && io.WantCaptureMouse ? "True" : "False");
+                ImGui::Text("Mouse Pointer: %s", mouseInputMode == GLFW_CURSOR_NORMAL ? "Normal" : "Disabled");
+
+                ImGui::Text("Mouse Position: (%.2f, %.2f)", static_cast<double>(io.MousePos.x), static_cast<double>(io.MousePos.y));
+                ImGui::Text("Camera Position: (%.1f, %.1f, %.1f)", camera.cameraPos.x, camera.cameraPos.y, camera.cameraPos.z);
+                ImGui::Text("Camera Facing: (%.1f, %.1f, %.1f)", camera.cameraFront.x, camera.cameraFront.y, camera.cameraFront.z);
+
+                ImGui::ColorEdit3("Background Color", reinterpret_cast<float*>(&clearColor));
+
+                if (ImGui::Button("Reset Player Position"))
+                {
+                    camera.cameraPos = Vector3::Forward * 3.0f;
+                    camera.cameraFront = Vector3::Back;
+                    camera.cameraUp = Vector3::Up;
+                }
+
+                ImGui::Checkbox("Toggle Point Light (or press F)", &enableSpotLight);
+                ImGui::SliderFloat("Environment Brightness", &environmentBrightness, 0.0f, 1.0f);
+                ImGui::SliderFloat3("Spotlight Position", value_ptr(spotLightPosition), -10.0f, 10.0f);
+                ImGui::SliderFloat("Spotlight Angle", &spotLightAngle, -1.0f, 1.0f);
+                ImGui::SameLine();
+                ImGui::InputFloat("(Edit angle)", &spotLightAngle);
+                ImGui::SliderFloat("Spotlight Brightness", &spotLightBrightness, 0.0f, 1.0f);
+
+                ImGui::Text("Render Time: %.3f ms/frame (%.1f FPS)", static_cast<double>(1000.0f / ImGui::GetIO().Framerate),
+                            static_cast<double>(ImGui::GetIO().Framerate));
+            }
+            ImGui::End();
+
+            ImGui::Begin("Scene View");
+            {
+                ImGui::BeginChild("Yeet");
+                // Get the current cursor position (where your window is)
+                ImVec2 currentCursorPosition = ImGui::GetWindowSize();
+                ImGui::Image(reinterpret_cast<void*>(textureColorBuffer), currentCursorPosition, ImVec2(0, 1), ImVec2(1, 0));
+                hoveredOverScene = (ImGui::IsItemHovered() || glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED);
+
+                ImGui::GetForegroundDrawList()->AddRect({ 0, 0 }, ImGui::GetWindowSize(), ImColor{ 255, 0, 0 });
+                ImGui::EndChild();
+            }
+            ImGui::End();
+
+            ImGui::EndChild();
+        }
+        ImGui::End();
+
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    	
+
         // Update and Render additional Platform Windows
         // (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
         //  For this specific demo app we could also call glfwMakeContextCurrent(window) directly)
@@ -320,6 +394,7 @@ int main()
     }
 
     glDeleteProgram(shader.getId());
+    glDeleteFramebuffers(1, &fbo);
 
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
@@ -341,10 +416,7 @@ bool mouseEnabled = true;
 
 void mouseCallback(GLFWwindow* window, const double xPos, const double yPos)
 {
-    const ImGuiIO& io = ImGui::GetIO();
-
-    if ((io.WantCaptureMouse && glfwGetInputMode(window, GLFW_CURSOR) != GLFW_CURSOR_DISABLED) || glfwGetInputMode(window, GLFW_CURSOR) ==
-        GLFW_CURSOR_NORMAL)
+    if (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_NORMAL)
     {
         return;
     }
@@ -373,14 +445,7 @@ void mouseCallback(GLFWwindow* window, const double xPos, const double yPos)
 
 void processInput(GLFWwindow* window)
 {
-    const ImGuiIO& io = ImGui::GetIO();
-
-    if ((io.WantCaptureKeyboard || io.WantCaptureMouse) && glfwGetInputMode(window, GLFW_CURSOR) != GLFW_CURSOR_DISABLED)
-    {
-        return;
-    }
-
-    if (!firstPressed && glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+    if (hoveredOverScene && !firstPressed && glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
     {
         mouseEnabled = !mouseEnabled;
         firstPressed = true;
@@ -392,7 +457,7 @@ void processInput(GLFWwindow* window)
             firstMouse = true;
         }
     }
-    else if (firstPressed && glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
+    else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
     {
         firstPressed = false;
     }
@@ -470,12 +535,5 @@ void processInput(GLFWwindow* window)
 
 void scrollCallback(GLFWwindow*, double, const double yOffset)
 {
-    const ImGuiIO& io = ImGui::GetIO();
-
-    if (io.WantCaptureMouse)
-    {
-        return;
-    }
-
     camera.setFov(camera.getFov() - static_cast<float>(yOffset));
 }
