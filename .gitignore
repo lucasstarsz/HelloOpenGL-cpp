@@ -437,3 +437,6 @@ FodyWeavers.xsd
 *.sln.iml
 
 .idea/
+
+# Do not include the project solition
+*.vcxproj

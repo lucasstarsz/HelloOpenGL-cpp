@@ -107,8 +107,18 @@ int main()
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
-    io.ConfigWindowsMoveFromTitleBarOnly = true;
+    // io.ConfigWindowsMoveFromTitleBarOnly = true;
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable; // Enable Docking
+    // io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Enable Multi-Viewport / Platform Windows
     ImGui::StyleColorsDark();
+
+    // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
+    ImGuiStyle& style = ImGui::GetStyle();
+    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    {
+        style.WindowRounding = 0.0f;
+        style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+    }
 
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init();
@@ -183,11 +193,11 @@ int main()
         int windowHeight;
         glfwGetWindowSize(window, &windowWidth, &windowHeight);
 
-        ImGui::SetNextWindowPos(ImVec2{ 0.0f, 0.0f });
-        ImGui::SetNextWindowSize(ImVec2{ 500.0f, static_cast<float>(windowHeight) });
+        // ImGui::SetNextWindowPos(ImVec2{ 0.0f, 0.0f });
+        // ImGui::SetNextWindowSize(ImVec2{ 500.0f, static_cast<float>(windowHeight) });
 
         {
-            ImGui::Begin("how does this qualify as a game engine");
+            ImGui::Begin("how does this even begin to qualify as a game engine");
 
             int mouseInputMode = glfwGetInputMode(window, GLFW_CURSOR);
             ImGui::Text("Mouse hovering on GUI: %s", mouseInputMode && io.WantCaptureMouse ? "True" : "False");
@@ -210,6 +220,8 @@ int main()
             ImGui::SliderFloat("Environment Brightness", &environmentBrightness, 0.0f, 1.0f);
             ImGui::SliderFloat3("Spotlight Position", value_ptr(spotLightPosition), -10.0f, 10.0f);
             ImGui::SliderFloat("Spotlight Angle", &spotLightAngle, -1.0f, 1.0f);
+            ImGui::SameLine();
+            ImGui::InputFloat("(Edit angle)", &spotLightAngle);
             ImGui::SliderFloat("Spotlight Brightness", &spotLightBrightness, 0.0f, 1.0f);
 
             ImGui::Text("Render Time: %.3f ms/frame (%.1f FPS)", static_cast<double>(1000.0f / ImGui::GetIO().Framerate),
@@ -292,6 +304,17 @@ int main()
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    	
+        // Update and Render additional Platform Windows
+        // (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
+        //  For this specific demo app we could also call glfwMakeContextCurrent(window) directly)
+        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+        {
+            GLFWwindow* backup_current_context = glfwGetCurrentContext();
+            ImGui::UpdatePlatformWindows();
+            ImGui::RenderPlatformWindowsDefault();
+            glfwMakeContextCurrent(backup_current_context);
+        }
 
         glfwSwapBuffers(window);
     }
